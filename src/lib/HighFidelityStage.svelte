@@ -13,9 +13,29 @@
   let currentPhase = null; // 'run-sync' | 'drain-micro' | 'run-macro'
   let history = []; // token/event history
   const activeTweens = new Set();
+  // Reduced motion preference
+  let reducedMotion = false;
+  if (typeof window !== "undefined" && window.matchMedia) {
+    try {
+      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      reducedMotion = mq.matches;
+      mq.addEventListener("change", (e) => (reducedMotion = e.matches));
+    } catch (err) {
+      // ignore matchMedia errors (e.g., unsupported environment)
+    }
+  }
 
   function track(tween) {
     if (!tween) return tween;
+    if (reducedMotion) {
+      // Immediately jump to end state if motion reduced
+      try {
+        tween.progress(1);
+      } catch (err) {
+        // ignore tween errors when forcing progress
+      }
+      return tween;
+    }
     activeTweens.add(tween);
     tween.eventCallback("onComplete", () => activeTweens.delete(tween));
     return tween;
@@ -141,25 +161,31 @@
       const secondDur = totalDur - firstDur;
       const midX = dx * 0.45;
       const midY = dy * 0.25 - arcLift;
-      track(
-        gsap.to(el, {
-          keyframes: [
-            { x: midX, y: midY, scale: 0.88, duration: firstDur, ease: "power2.out" },
-            {
-              x: dx,
-              y: dy,
-              scale: 0.52,
-              opacity: 0,
-              duration: secondDur,
-              ease: "power1.in",
-              onComplete: () => {
-                if (kind === "micro") dequeueMicro(token);
-                else dequeueMacro(token);
+      if (reducedMotion) {
+        // Directly remove from queue without animation
+        if (kind === "micro") dequeueMicro(token);
+        else dequeueMacro(token);
+      } else {
+        track(
+          gsap.to(el, {
+            keyframes: [
+              { x: midX, y: midY, scale: 0.88, duration: firstDur, ease: "power2.out" },
+              {
+                x: dx,
+                y: dy,
+                scale: 0.52,
+                opacity: 0,
+                duration: secondDur,
+                ease: "power1.in",
+                onComplete: () => {
+                  if (kind === "micro") dequeueMicro(token);
+                  else dequeueMacro(token);
+                },
               },
-            },
-          ],
-        })
-      );
+            ],
+          })
+        );
+      }
     } else {
       if (kind === "micro") dequeueMicro(token);
       else dequeueMacro(token);
@@ -181,8 +207,8 @@
     const el = document.querySelector(`[data-phase="${phase}"]`);
     if (!el) return;
     el.classList.add("pulse");
-  // force reflow
-  void /** @type {HTMLElement} */ (el).offsetWidth;
+    // force reflow
+    void (/** @type {HTMLElement} */ (el).offsetWidth);
     setTimeout(() => el.classList.remove("pulse"), 350);
   }
 
@@ -219,6 +245,7 @@
     if (isMicro) dur = 0.28;
     else if (isMacro) dur = 0.45;
     else if (isApi) dur = 0.38;
+    if (reducedMotion) return; // skip entrance animation
     track(
       gsap.from(node, { y: 14, opacity: 0, scale: 0.85, duration: dur, ease: "back.out(1.7)" })
     );
@@ -265,7 +292,9 @@
   function setTimeScale(ts) {
     const scale = Math.max(0.05, ts || 1);
     animationSpeed = scale;
-    if (smoothSpeed) {
+    if (reducedMotion) {
+      gsap.globalTimeline.timeScale(scale);
+    } else if (smoothSpeed) {
       track(gsap.to(gsap.globalTimeline, { timeScale: scale, duration: 0.35, ease: "power2.out" }));
     } else {
       gsap.globalTimeline.timeScale(scale);
