@@ -17,6 +17,29 @@ export function scenarioTimerVsPromise(): SimEvent[] {
   ];
 }
 
+// High fidelity scenario mapping code sample to granular events
+export function scenarioHiFiBasic(): SimEvent[] {
+  const timeout: Token = { id: "timeout1", type: "timer", label: "setTimeout cb" };
+  const promiseThen: Token = { id: "promise1", type: "promise", label: "then(res)" };
+  return [
+    { type: "stack-push", frame: "global" },
+    { type: "sync", description: "console.log('Start!')" },
+    { type: "webapi-add", token: timeout },
+    { type: "enqueue-micro", token: promiseThen },
+    { type: "sync", description: "console.log('End!')" },
+    { type: "webapi-complete", token: timeout },
+    { type: "enqueue-macro", token: timeout },
+    { type: "tick", phase: "drain-micro" },
+    { type: "dequeue-micro", token: promiseThen },
+    { type: "sync", description: "console.log('Promise!')" },
+    { type: "tick", phase: "run-macro" },
+    { type: "dequeue-macro", token: timeout },
+    { type: "sync", description: "console.log('Timeout!')" },
+    { type: "stack-pop", frame: "global" },
+    { type: "scenario-end" },
+  ];
+}
+
 /**
  * Returns a scenario with two logs to show sync execution.
  */
