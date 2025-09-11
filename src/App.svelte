@@ -15,6 +15,11 @@
   let speed = 1; // 1x
   let running = false;
   let narration = "Ready to explore the JavaScript playground.";
+  let narrationHistory = [];
+  let aggregateNarration = true; // show rolling history in Hi-Fi
+  // Hi-Fi animation separate from logical simulation speed
+  let animationSpeed = 1; // 0.25x - 3x
+  let smoothAnim = true; // smooth GSAP timeScale transitions
   // Mode: 'kid' | 'pro' | 'hifi'
   let mode = "kid";
   // Simple logs for Pro Mode
@@ -95,6 +100,9 @@
   function onPlay() {
     running = true;
     stageApi && stageApi.playTimeline();
+    if (mode === "hifi" && stageApi?.setTimeScale) {
+      stageApi.setTimeScale(speed);
+    }
     runner.play();
   }
   function onPause() {
@@ -113,6 +121,14 @@
 
   // Bind speed slider (0.25x–3x) to ms per step (base 800ms)
   $: runner && runner.setSpeed(800 / speed);
+  // Hi-Fi: adjust animation time scale separately
+  $: if (mode === "hifi" && stageApi?.setTimeScale) {
+    stageApi.setTimeScale(animationSpeed);
+  }
+  // Hi-Fi: toggle smooth speed easing
+  $: if (mode === "hifi" && stageApi?.setSmoothSpeed) {
+    stageApi.setSmoothSpeed(smoothAnim);
+  }
 
   // Keyboard accessibility
   function onKeydown(e) {
@@ -235,7 +251,15 @@
       class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.15),transparent_60%)]"
     ></div>
     {#if mode === "hifi"}
-      <HighFidelityStage bind:api={stageApi} {mode} />
+      <HighFidelityStage
+        bind:api={stageApi}
+        onNarrate={(l) => {
+          narration = l;
+          if (aggregateNarration) {
+            narrationHistory = [...narrationHistory, { t: Date.now(), line: l }].slice(-20);
+          }
+        }}
+      />
     {:else}
       <Stage bind:api={stageApi} {mode} />
     {/if}
@@ -257,15 +281,82 @@
       onSpeedChange={(v) => (speed = v)}
       onSoundToggle={(v) => (soundOn = v)}
     />
+    {#if mode === "hifi"}
+      <div
+        class="flex flex-wrap items-center gap-4 mt-1"
+        aria-label="High fidelity animation controls"
+      >
+        <label class="flex items-center gap-2 text-xs font-medium">
+          Anim
+          <input
+            type="range"
+            min="0.25"
+            max="3"
+            step="0.25"
+            bind:value={animationSpeed}
+            class="accent-violet-600"
+            aria-label="Animation speed"
+          />
+          <span class="tabular-nums font-mono"
+            >{animationSpeed.toFixed(2).replace(/\.00$/, "")}×</span
+          >
+        </label>
+        <label class="flex items-center gap-2 text-xs font-medium">
+          <input
+            type="checkbox"
+            bind:checked={smoothAnim}
+            class="accent-violet-600"
+            aria-label="Smooth animation speed transitions"
+          />
+          Smooth
+        </label>
+        <button
+          class="btn-neutral text-xs px-3 py-2"
+          on:click={() => stageApi?.clearHistory?.()}
+          aria-label="Clear token history">Clear History</button
+        >
+        <button
+          class="btn-neutral text-xs px-3 py-2"
+          on:click={() => stageApi?.exportHistory?.()}
+          aria-label="Export token history">Export</button
+        >
+      </div>
+    {/if}
 
     <div class="flex flex-col gap-4 md:flex-row md:items-start md:gap-8">
-      <section
-        aria-live="polite"
-        class="flex-1 text-base md:text-lg text-gray-700 dark:text-gray-200 font-medium"
-        aria-atomic="true"
-        data-testid="narration"
-      >
-        {narration}
+      <section class="flex-1 flex flex-col gap-3" aria-label="Narration">
+        <div
+          aria-live="polite"
+          class="text-base md:text-lg text-gray-700 dark:text-gray-200 font-medium"
+          aria-atomic="true"
+          data-testid="narration"
+        >
+          {narration}
+        </div>
+        {#if mode === "hifi"}
+          <div class="flex items-center gap-2 text-xs">
+            <label class="inline-flex items-center gap-1 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                bind:checked={aggregateNarration}
+                class="accent-blue-600"
+                aria-label="Toggle narration history"
+              />
+              History
+            </label>
+          </div>
+          {#if aggregateNarration}
+            <ol
+              class="narration-history"
+              aria-label="Narration history"
+              data-empty={narrationHistory.length === 0}
+            >
+              {#each [...narrationHistory].slice().reverse() as h (h.t)}
+                <li>{h.line}</li>
+              {/each}
+            </ol>
+          {/if}
+        {/if}
       </section>
       <div class="md:w-1/3" aria-label="Legend container">
         <Legend {mode} />
@@ -304,3 +395,29 @@
     </aside>
   {/if}
 </main>
+
+<style>
+  .narration-history {
+    margin: 0;
+    padding-left: 1rem;
+    list-style: disc;
+    max-height: 160px;
+    overflow: auto;
+    font-size: 0.75rem;
+    line-height: 1.1rem;
+    color: var(--tw-prose-body, #4b5563);
+  }
+  .narration-history[data-empty="true"]::after {
+    content: "(no history yet)";
+    opacity: 0.5;
+    font-style: italic;
+    display: block;
+    padding-left: 0.25rem;
+  }
+  .narration-history li {
+    margin: 0 0 0.25rem;
+  }
+  :global(.dark) .narration-history {
+    color: #d1d5db;
+  }
+</style>

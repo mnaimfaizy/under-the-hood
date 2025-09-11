@@ -24,6 +24,8 @@ export type SimEvent =
   | { type: "enqueue-macro"; token: Token }
   | { type: "dequeue-micro"; token: Token }
   | { type: "dequeue-macro"; token: Token }
+  | { type: "webapi-add"; token: Token }
+  | { type: "webapi-complete"; token: Token }
   | { type: "tick"; phase: "run-sync" | "drain-micro" | "run-macro" }
   | { type: "scenario-end" };
 

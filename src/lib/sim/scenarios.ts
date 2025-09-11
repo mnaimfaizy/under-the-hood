@@ -24,13 +24,17 @@ export function scenarioHiFiBasic(): SimEvent[] {
   return [
     { type: "stack-push", frame: "global" },
     { type: "sync", description: "console.log('Start!')" },
-    { type: "enqueue-macro", token: timeout },
+    { type: "webapi-add", token: timeout },
     { type: "enqueue-micro", token: promiseThen },
     { type: "sync", description: "console.log('End!')" },
+    { type: "webapi-complete", token: timeout },
+    { type: "enqueue-macro", token: timeout },
     { type: "tick", phase: "drain-micro" },
     { type: "dequeue-micro", token: promiseThen },
+    { type: "sync", description: "console.log('Promise!')" },
     { type: "tick", phase: "run-macro" },
     { type: "dequeue-macro", token: timeout },
+    { type: "sync", description: "console.log('Timeout!')" },
     { type: "stack-pop", frame: "global" },
     { type: "scenario-end" },
   ];
