@@ -15,7 +15,11 @@
   }
 }
 
-html, body, #app { height: 100%; }
+html,
+body,
+#app {
+  height: 100%;
+}
 body {
   background-color: rgb(var(--bg));
   color: rgb(var(--fg));
