@@ -139,7 +139,9 @@
 <main class="min-h-screen flex flex-col gap-6 p-4 md:p-8 max-w-7xl mx-auto">
   <header class="flex flex-wrap gap-4 items-center justify-between">
     <div>
-      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400">
+      <h1
+        class="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400"
+      >
         Under the Hood: JavaScript
       </h1>
       <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1 max-w-prose">
@@ -178,7 +180,9 @@
     class="surface shadow-sm p-3 md:p-5 relative overflow-hidden"
     aria-label="Simulation stage and controls"
   >
-    <div class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.15),transparent_60%)]"></div>
+    <div
+      class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.15),transparent_60%)]"
+    ></div>
     <Stage bind:api={stageApi} {mode} />
   </section>
 
@@ -199,12 +203,9 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <button
-          class="btn-primary"
-          on:click={onPlay}
-          aria-pressed={running}
-          aria-label="Play"
-        >Play</button>
+        <button class="btn-primary" on:click={onPlay} aria-pressed={running} aria-label="Play"
+          >Play</button
+        >
         <button class="btn-neutral" on:click={onPause} aria-label="Pause">Pause</button>
         <button class="btn-neutral" on:click={onRestart} aria-label="Restart">Restart</button>
       </div>
@@ -241,7 +242,10 @@
     <aside class="grid gap-5 md:grid-cols-2" aria-label="Pro Mode Panels">
       <div class="surface-alt p-4 shadow-sm">
         <h2 class="panel-title mb-2">Logs</h2>
-        <div class="h-48 overflow-auto text-xs md:text-sm space-y-1 font-mono pr-1" data-testid="logs">
+        <div
+          class="h-48 overflow-auto text-xs md:text-sm space-y-1 font-mono pr-1"
+          data-testid="logs"
+        >
           {#each logs as item}
             <div class="text-gray-700 dark:text-gray-300">
               {new Date(item.t).toLocaleTimeString()} — {item.msg}
@@ -254,7 +258,9 @@
       </div>
       <div class="surface-alt p-4 shadow-sm">
         <h2 class="panel-title mb-2">Tips</h2>
-        <ul class="list-disc list-inside text-xs md:text-sm text-gray-700 dark:text-gray-300 leading-relaxed space-y-1">
+        <ul
+          class="list-disc list-inside text-xs md:text-sm text-gray-700 dark:text-gray-300 leading-relaxed space-y-1"
+        >
           <li>Parser → Ignition compiles quickly; TurboFan optimizes hot code paths.</li>
           <li>Promises (microtasks) always run before timers (macrotasks) in a turn.</li>
           <li>GC is like a tiny robot tidying memory spaces between tasks.</li>
