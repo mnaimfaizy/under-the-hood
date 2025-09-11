@@ -71,18 +71,18 @@ Owner: Complete ✅ | Effort: Medium | Depends on: T1
 
 ## T3 — Controls & Narration
 
-Owner: TBD | Effort: Small | Depends on: T1, T2
+Owner: Complete ✅ | Effort: Small | Depends on: T1, T2
 
 ### T3.1 Wire controls to runner
 
-- Hook Play/Pause/Restart/Speed to runner API in `App.svelte`.
-- Acceptance: Buttons control the animation deterministically.
+**[✔️ Complete]** Hook Play/Pause/Restart/Speed to runner API in `App.svelte`.
+**[✔️ Complete]** Acceptance: Buttons control the animation deterministically.
 
 ### T3.2 Narration script
 
-- Map each major step to a Kid-friendly one-liner.
-- Aria-live updates; optional sound cue (muted by default).
-- Acceptance: Narration changes on each step; accessible.
+**[✔️ Complete]** Map each major step to a Kid-friendly one-liner.
+**[✔️ Complete]** Aria-live updates; optional sound cue (muted by default).
+**[✔️ Complete]** Acceptance: Narration changes on each step; accessible.
 
 ---
 
