@@ -20,28 +20,30 @@ This document lists actionable tasks and subtasks for the next agent to continue
 
 ## T1 — Simulation Engine (MVP)
 
-Owner: TBD | Effort: Medium | Depends on: None
+Owner: Complete ✅ | Effort: Medium | Depends on: None
 
 ### T1.1 Define core types
 
-- Token shape: `{ id, kind: 'sync'|'micro'|'macro'|'webapi', label, color }`
-- Events: `push_stack`, `pop_stack`, `offload_to_webapi`, `enqueue_micro`, `enqueue_macro`, `loop_cycle_start`, `loop_drain_micro`, `loop_run_macro`.
-- Acceptance: Types exported from `src/lib/sim/types.ts` with JSDoc.
+**[✔️ Complete]** Token shape: `{ id, kind: 'sync'|'micro'|'macro'|'webapi', label, color }`
+**[✔️ Complete]** Events: `push_stack`, `pop_stack`, `offload_to_webapi`, `enqueue_micro`, `enqueue_macro`, `loop_cycle_start`, `loop_drain_micro`, `loop_run_macro`.
+**[✔️ Complete]** Acceptance: Types exported from `src/lib/sim/types.ts` with JSDoc.
 
 ### T1.2 Event-loop runner
 
-- Implement deterministic cycle: Sync → DrainMicrotasks → RunOneMacrotask → Repeat.
-- Drive with a virtual clock (requestAnimationFrame or GSAP timeline time).
-- API contract:
-  - `createRunner({ onEvent, speed }): { play(), pause(), step(), reset(), load(scenario) }`
-- Acceptance: Unit tests verifying microtasks drain before macrotasks.
+**[✔️ Complete]** Implement deterministic cycle: Sync → DrainMicrotasks → RunOneMacrotask → Repeat.
+**[✔️ Complete]** Drive with a virtual clock (requestAnimationFrame or GSAP timeline time).
+**[✔️ Complete]** API contract:
+
+- `createRunner({ onEvent, speed }): { play(), pause(), step(), reset(), load(scenario) }`
+  **[✔️ Complete]** Acceptance: Unit tests verifying microtasks drain before macrotasks.
 
 ### T1.3 Scenario DSL
 
-- Create `src/lib/sim/scenarios.ts` with small helpers:
-  - `scenarioTimerVsPromise()` emits a sequence when played.
-  - `scenarioTwoLogs()` and `scenarioFetchRobot()`.
-- Acceptance: Scenarios emit expected events without UI.
+**[✔️ Complete]** Create `src/lib/sim/scenarios.ts` with small helpers:
+
+- `scenarioTimerVsPromise()` emits a sequence when played.
+- `scenarioTwoLogs()` and `scenarioFetchRobot()`.
+  **[✔️ Complete]** Acceptance: Scenarios emit expected events without UI.
 
 ---
 
