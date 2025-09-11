@@ -18,6 +18,13 @@ export type SimEvent =
   | { type: "microtask-drain"; description: string }
   | { type: "macrotask-run"; description: string }
   | { type: "token-move"; token: Token; from: string; to: string }
+  | { type: "stack-push"; frame: string }
+  | { type: "stack-pop"; frame: string }
+  | { type: "enqueue-micro"; token: Token }
+  | { type: "enqueue-macro"; token: Token }
+  | { type: "dequeue-micro"; token: Token }
+  | { type: "dequeue-macro"; token: Token }
+  | { type: "tick"; phase: "run-sync" | "drain-micro" | "run-macro" }
   | { type: "scenario-end" };
 
 /**

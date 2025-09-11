@@ -1,15 +1,16 @@
 <script>
   import Stage from "./lib/Stage.svelte";
+  import HighFidelityStage from "./lib/HighFidelityStage.svelte";
   import Controls from "./lib/Controls.svelte";
   import Legend from "./lib/Legend.svelte";
   import { createRunner } from "./lib/sim/engine";
-  import { scenarioTimerVsPromise, scenarioTwoLogs, scenarioFetchRobot } from "./lib/sim/scenarios";
+  import { scenarioTimerVsPromise, scenarioTwoLogs, scenarioFetchRobot, scenarioHiFiBasic } from "./lib/sim/scenarios";
 
   // UI state
   let speed = 1; // 1x
   let running = false;
   let narration = "Ready to explore the JavaScript playground.";
-  // Mode: 'kid' | 'pro' (Kid Mode by default)
+  // Mode: 'kid' | 'pro' | 'hifi'
   let mode = "kid";
   // Simple logs for Pro Mode
   let logs = [];
@@ -33,6 +34,10 @@
   });
 
   function loadSelectedScenario() {
+    if (mode === "hifi") {
+      runner.load(scenarioHiFiBasic());
+      return;
+    }
     if (scenario === "timer-vs-promise") runner.load(scenarioTimerVsPromise());
     else if (scenario === "two-logs") runner.load(scenarioTwoLogs());
     else if (scenario === "fetch-robot") runner.load(scenarioFetchRobot());
@@ -190,10 +195,22 @@
             on:change={(e) => {
               mode = e.currentTarget.checked ? "pro" : "kid";
               logs = [];
+              loadSelectedScenario();
             }}
           />
           {mode === "pro" ? "Pro Mode" : "Kid Mode"}
         </label>
+        <button
+          class="btn-neutral text-xs px-3 py-2"
+          on:click={() => {
+            mode = mode === "hifi" ? "kid" : "hifi";
+            logs = [];
+            loadSelectedScenario();
+          }}
+          aria-label="Toggle High Fidelity View"
+        >
+          {mode === "hifi" ? "Basic View" : "Hi-Fi View"}
+        </button>
         <button
           class="btn-neutral text-xs px-3 py-2"
           aria-label="Toggle dark mode"
@@ -212,7 +229,11 @@
     <div
       class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.15),transparent_60%)]"
     ></div>
-    <Stage bind:api={stageApi} {mode} />
+    {#if mode === "hifi"}
+      <HighFidelityStage bind:api={stageApi} {mode} />
+    {:else}
+      <Stage bind:api={stageApi} {mode} />
+    {/if}
   </section>
 
   <section class="flex flex-col gap-4">
