@@ -88,12 +88,12 @@ Owner: Complete ✅ | Effort: Small | Depends on: T1, T2
 
 ## T4 — Kid Mode Scenarios (MVP)
 
-Owner: TBD | Effort: Small-Medium | Depends on: T1–T3
+Owner: Complete ✅ | Effort: Small-Medium | Depends on: T1–T3
 
-- Scenario 1: Two Logs (sync order)
-- Scenario 2: Timer vs Promise (microtask priority)
-- Scenario 3: Fetch Robot (offload → enqueue later)
-- Acceptance: Each scenario selectable and plays end-to-end correctly.
+**[✔️ Complete]** Scenario 1: Two Logs (sync order)
+**[✔️ Complete]** Scenario 2: Timer vs Promise (microtask priority)
+**[✔️ Complete]** Scenario 3: Fetch Robot (offload → enqueue later)
+**[✔️ Complete]** Acceptance: Each scenario selectable and plays end-to-end correctly.
 
 ---
 
