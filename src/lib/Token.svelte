@@ -24,6 +24,12 @@
     prefersReducedMotion = mq.matches;
     const handler = (e) => (prefersReducedMotion = e.matches);
     mq.addEventListener?.("change", handler);
+    // Entrance animation
+    if (!prefersReducedMotion && tokenEl) {
+      gsap.from(tokenEl, { scale: 0.4, opacity: 0, duration: 0.35, ease: "back.out(1.7)" });
+    } else if (tokenEl) {
+      gsap.set(tokenEl, { opacity: 1, scale: 1 });
+    }
   });
 
   // Animate position changes (respect reduced motion)

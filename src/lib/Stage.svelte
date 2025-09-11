@@ -27,9 +27,9 @@
   // --- T2.3: Event → Motion Mapper ---
   import Token from "./Token.svelte";
   import gsap from "gsap";
-  import { onMount } from "svelte";
 
-  // Token state: { id, type, label, color, x, y }
+  // Token state Map for performance keyed by id
+  let tokenMap = new Map();
   let tokens = [];
 
   // Master GSAP timeline
@@ -85,22 +85,17 @@
               return "sync";
           }
         };
-        let idx = tokens.findIndex((t) => t.id === event.token.id);
-        if (idx === -1) {
-          tokens = [
-            ...tokens,
-            {
-              id: event.token.id,
-              kind: toKind(event.token.type),
-              label: event.token.label,
-              color: event.token.color,
-              x: anchor.x,
-              y: anchor.y,
-            },
-          ];
-        } else {
-          tokens = tokens.map((t, i) => (i === idx ? { ...t, x: anchor.x, y: anchor.y } : t));
-        }
+        const existing = tokenMap.get(event.token.id);
+        const next = {
+          id: event.token.id,
+          kind: toKind(event.token.type),
+          label: event.token.label,
+          color: event.token.color,
+          x: anchor.x,
+          y: anchor.y,
+        };
+        tokenMap.set(event.token.id, { ...(existing || {}), ...next });
+        tokens = Array.from(tokenMap.values());
       }
     }
   }
@@ -119,6 +114,7 @@
     timeline.seek(0).pause();
   }
   function resetTokens() {
+    tokenMap.clear();
     tokens = [];
   }
 
@@ -148,37 +144,42 @@
   <rect width="100%" height="100%" fill="url(#grid)" />
 
   <!-- Placeholder blocks -->
-  <g>
-    <rect x="40" y="60" width="220" height="140" rx="12" fill="#e0f2fe" stroke="#0284c7" />
-    <title>Call Stack: where synchronous JS runs</title>
+  <g role="group" aria-label="Call Stack block">
+    <rect x="40" y="60" width="220" height="140" rx="12" fill="#e0f2fe" stroke="#0284c7">
+      <title>Call Stack: where synchronous JS runs</title>
+    </rect>
     <text x="150" y="135" text-anchor="middle" class="fill-black" font-size="18">Call Stack</text>
   </g>
 
-  <g>
-    <rect x="700" y="60" width="220" height="140" rx="12" fill="#ecfccb" stroke="#65a30d" />
-    <title>Web APIs: timers, fetch, and more</title>
+  <g role="group" aria-label="Web APIs block">
+    <rect x="700" y="60" width="220" height="140" rx="12" fill="#ecfccb" stroke="#65a30d">
+      <title>Web APIs: timers, fetch, and more</title>
+    </rect>
     <text x="810" y="135" text-anchor="middle" class="fill-black" font-size="18">Web APIs</text>
   </g>
 
-  <g>
-    <rect x="40" y="340" width="280" height="120" rx="12" fill="#fef3c7" stroke="#d97706" />
-    <title>Microtask Queue: promises first</title>
+  <g role="group" aria-label="Microtask Queue block">
+    <rect x="40" y="340" width="280" height="120" rx="12" fill="#fef3c7" stroke="#d97706">
+      <title>Microtask Queue: promises first</title>
+    </rect>
     <text x="180" y="405" text-anchor="middle" class="fill-black" font-size="18"
       >Microtask Queue</text
     >
   </g>
 
-  <g>
-    <rect x="360" y="340" width="280" height="120" rx="12" fill="#fee2e2" stroke="#ef4444" />
-    <title>Macrotask Queue: timers and more</title>
+  <g role="group" aria-label="Macrotask Queue block">
+    <rect x="360" y="340" width="280" height="120" rx="12" fill="#fee2e2" stroke="#ef4444">
+      <title>Macrotask Queue: timers and more</title>
+    </rect>
     <text x="500" y="405" text-anchor="middle" class="fill-black" font-size="18"
       >Macrotask Queue</text
     >
   </g>
 
-  <g>
-    <rect x="680" y="340" width="240" height="120" rx="12" fill="#ede9fe" stroke="#7c3aed" />
-    <title>Event Loop: picks what runs next</title>
+  <g role="group" aria-label="Event Loop block">
+    <rect x="680" y="340" width="240" height="120" rx="12" fill="#ede9fe" stroke="#7c3aed">
+      <title>Event Loop: picks what runs next</title>
+    </rect>
     <text x="800" y="405" text-anchor="middle" class="fill-black" font-size="18">Event Loop</text>
   </g>
 

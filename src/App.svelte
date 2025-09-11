@@ -1,5 +1,7 @@
 <script>
   import Stage from "./lib/Stage.svelte";
+  import Controls from "./lib/Controls.svelte";
+  import Legend from "./lib/Legend.svelte";
   import { createRunner } from "./lib/sim/engine";
   import { scenarioTimerVsPromise, scenarioTwoLogs, scenarioFetchRobot } from "./lib/sim/scenarios";
 
@@ -113,6 +115,33 @@
     }
   }
 
+  // Dark mode persistence
+  const THEME_KEY = "uth-theme";
+  function loadTheme() {
+    if (typeof window === "undefined") return;
+    try {
+      const stored = window.localStorage.getItem(THEME_KEY);
+      if (stored) {
+        document.documentElement.classList.toggle("dark", stored === "dark");
+      } else {
+        const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", prefers);
+      }
+    } catch {
+      // localStorage not accessible; ignore preference load
+    }
+  }
+  if (typeof window !== "undefined") loadTheme();
+  function toggleTheme() {
+    if (typeof window === "undefined") return;
+    const isDark = document.documentElement.classList.toggle("dark");
+    try {
+      window.localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+    } catch {
+      // ignore persistence errors
+    }
+  }
+
   // Optional sound cue (muted by default)
   let soundOn = false;
   let audioCtx = null;
@@ -168,7 +197,7 @@
         <button
           class="btn-neutral text-xs px-3 py-2"
           aria-label="Toggle dark mode"
-          on:click={() => document.documentElement.classList.toggle("dark")}
+          on:click={toggleTheme}
         >
           Theme
         </button>
@@ -187,55 +216,35 @@
   </section>
 
   <section class="flex flex-col gap-4">
-    <div class="flex flex-wrap items-center gap-3 bg-transparent">
-      <div class="flex items-center gap-2">
-        <label class="text-xs font-semibold tracking-wide uppercase opacity-70">Scenario</label>
-        <select
-          class="px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm"
-          bind:value={scenario}
-          on:change={onRestart}
-          aria-label="Choose scenario"
-        >
-          <option value="two-logs">Two Logs</option>
-          <option value="timer-vs-promise">Timer vs Promise</option>
-          <option value="fetch-robot">Fetch Robot</option>
-        </select>
-      </div>
+    <Controls
+      {running}
+      {speed}
+      {scenario}
+      {soundOn}
+      {onPlay}
+      {onPause}
+      {onRestart}
+      onScenarioChange={(v) => {
+        scenario = v;
+        onRestart();
+      }}
+      onSpeedChange={(v) => (speed = v)}
+      onSoundToggle={(v) => (soundOn = v)}
+    />
 
-      <div class="flex items-center gap-2">
-        <button class="btn-primary" on:click={onPlay} aria-pressed={running} aria-label="Play"
-          >Play</button
-        >
-        <button class="btn-neutral" on:click={onPause} aria-label="Pause">Pause</button>
-        <button class="btn-neutral" on:click={onRestart} aria-label="Restart">Restart</button>
-      </div>
-
-      <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-        <input type="checkbox" bind:checked={soundOn} class="accent-blue-600" /> Sound
-      </label>
-
-      <div class="flex items-center gap-2 ml-auto">
-        <label class="text-xs font-semibold tracking-wide uppercase opacity-70">Speed</label>
-        <input
-          type="range"
-          min="0.25"
-          max="3"
-          step="0.25"
-          bind:value={speed}
-          class="accent-blue-600"
-        />
-        <span class="text-sm tabular-nums font-mono">{speed}×</span>
+    <div class="flex flex-col gap-4 md:flex-row md:items-start md:gap-8">
+      <section
+        aria-live="polite"
+        class="flex-1 text-base md:text-lg text-gray-700 dark:text-gray-200 font-medium"
+        aria-atomic="true"
+        data-testid="narration"
+      >
+        {narration}
+      </section>
+      <div class="md:w-1/3" aria-label="Legend container">
+        <Legend {mode} />
       </div>
     </div>
-
-    <section
-      aria-live="polite"
-      class="text-base md:text-lg text-gray-700 dark:text-gray-200 font-medium"
-      aria-atomic="true"
-      data-testid="narration"
-    >
-      {narration}
-    </section>
   </section>
 
   {#if mode === "pro"}

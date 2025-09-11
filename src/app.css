@@ -113,6 +113,16 @@ button:active:not([disabled]) {
   border-radius: var(--radius-md);
 }
 
+@media (max-width: 900px) {
+  main > header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .legend {
+    width: 100%;
+  }
+}
+
 .panel-title {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
