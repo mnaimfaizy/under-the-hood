@@ -125,7 +125,7 @@ Owner: Complete ✅ | Effort: Small-Medium | Depends on: T1–T4
 
 ## T7 — Pro Mode (Post-MVP)
 
-Owner: TBD | Effort: Medium | Depends on: T1–T6
+Owner: Complete ✅ | Effort: Medium | Depends on: T1–T6
 
 - Toggle to reveal Engine pipeline (Parser → Ignition → TurboFan)
 - Heap/GC mini-scene (cleaning robot)
