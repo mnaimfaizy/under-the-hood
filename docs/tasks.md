@@ -185,3 +185,60 @@ Acceptance verification:
 - Node mismatch (upgrade required).
 - Performance: keep animations transform-only; avoid large DOM.
 - Accuracy vs simplicity: Kid Mode first, Pro Mode later with nuance.
+
+---
+
+## T10 — UI Polish & Enhancements (New)
+
+Owner: TBD | Effort: Small–Medium | Depends on: T1–T9
+
+### T10.1 Animated Token Lifecycle
+
+**Goal:** Add entrance (scale/fade in) and exit (shrink/fade out) animations for tokens to improve clarity when tasks appear/disappear.
+**Acceptance:** New tokens animate in under 400ms respecting reduced motion; removals are visually distinct and accessible.
+
+### T10.2 Responsive Stage Layout
+
+**Goal:** Reflow controls beneath stage on < 900px width; ensure tap targets ≥44px.
+**Acceptance:** Mobile viewport shows stacked layout with no horizontal scroll.
+
+### T10.3 Block Legends & ARIA Labelling
+
+**Goal:** Add a persistent legend explaining shapes & colors (Kid + Pro) and ARIA labels per block for screen readers.
+**Acceptance:** Legend entries map 1:1 with visual tokens; accessibility audit (axe) passes for landmarks and labels.
+
+### T10.4 Dark Mode Persistence
+
+**Goal:** Persist dark/light preference to localStorage and initialize on load; add prefers-color-scheme sync.
+**Acceptance:** Toggling theme survives reload; initial mode matches system unless user override stored.
+
+### T10.5 Performance Token Update Optimization
+
+**Goal:** Switch token storage to keyed Map/object to avoid array map churn on frequent updates.
+**Acceptance:** No functional change; unit micro-benchmark shows fewer allocations (document in PR notes).
+
+### T10.6 Extract Controls Component
+
+**Goal:** Move control bar into `src/lib/Controls.svelte` for readability and reuse.
+**Acceptance:** `App.svelte` shrinks; all functionality (play/pause/step/speed/scenario select) unchanged with existing tests green.
+
+### T10.7 Pro Mode Legend & Tooltips
+
+**Goal:** Add hover/focus tooltips explaining Engine pipeline steps & GC robot.
+**Acceptance:** Keyboard focus reveals tooltip text; reduced motion users still get instant tooltip (no jitter).
+
+### T10.8 Documentation Update
+
+**Goal:** Reflect UI polish tasks in README (screenshots or alt text description) and add section on themes & legend.
+**Acceptance:** README includes new screenshot placeholders and updated instructions.
+
+### Ordering Recommendation
+
+Implement in order: T10.2 (layout) → T10.1 (animations) → T10.3 (legend/ARIA) → T10.4 (theme persistence) → T10.6 (refactor) → T10.5 (perf) → T10.7 (tooltips) → T10.8 (docs).
+
+### Risks / Mitigations
+
+- Animation clutter: keep durations short; respect reduced motion.
+- Accessibility regression: add axe run in Playwright for control panel & legend.
+
+---

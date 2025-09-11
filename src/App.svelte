@@ -1,5 +1,7 @@
 <script>
   import Stage from "./lib/Stage.svelte";
+  import Controls from "./lib/Controls.svelte";
+  import Legend from "./lib/Legend.svelte";
   import { createRunner } from "./lib/sim/engine";
   import { scenarioTimerVsPromise, scenarioTwoLogs, scenarioFetchRobot } from "./lib/sim/scenarios";
 
@@ -113,6 +115,33 @@
     }
   }
 
+  // Dark mode persistence
+  const THEME_KEY = "uth-theme";
+  function loadTheme() {
+    if (typeof window === "undefined") return;
+    try {
+      const stored = window.localStorage.getItem(THEME_KEY);
+      if (stored) {
+        document.documentElement.classList.toggle("dark", stored === "dark");
+      } else {
+        const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", prefers);
+      }
+    } catch {
+      // localStorage not accessible; ignore preference load
+    }
+  }
+  if (typeof window !== "undefined") loadTheme();
+  function toggleTheme() {
+    if (typeof window === "undefined") return;
+    const isDark = document.documentElement.classList.toggle("dark");
+    try {
+      window.localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+    } catch {
+      // ignore persistence errors
+    }
+  }
+
   // Optional sound cue (muted by default)
   let soundOn = false;
   let audioCtx = null;
@@ -136,101 +165,98 @@
 
 <svelte:window on:keydown={onKeydown} />
 
-<main class="min-h-screen flex flex-col gap-4 p-4 md:p-8 max-w-6xl mx-auto">
-  <header class="flex items-center justify-between">
-    <h1 class="text-2xl md:text-3xl font-bold">Under the Hood: JavaScript</h1>
-    <nav
-      class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300"
-      aria-label="Mode switcher"
-    >
-      <label class="inline-flex items-center gap-2">
-        <input
-          type="checkbox"
-          role="switch"
-          aria-checked={mode === "pro"}
-          aria-label="Toggle Pro Mode"
-          on:change={(e) => {
-            mode = e.currentTarget.checked ? "pro" : "kid";
-            logs = [];
-          }}
-        />
-        {mode === "pro" ? "Pro Mode" : "Kid Mode"}
-      </label>
-    </nav>
+<main class="min-h-screen flex flex-col gap-6 p-4 md:p-8 max-w-7xl mx-auto">
+  <header class="flex flex-wrap gap-4 items-center justify-between">
+    <div>
+      <h1
+        class="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400"
+      >
+        Under the Hood: JavaScript
+      </h1>
+      <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1 max-w-prose">
+        Visualize how the event loop schedules work using kid-friendly metaphors—and peek deeper in
+        Pro Mode.
+      </p>
+    </div>
+    <div class="flex items-center gap-6 ml-auto">
+      <div class="flex items-center gap-4">
+        <label class="inline-flex items-center gap-2 text-sm font-medium select-none">
+          <input
+            type="checkbox"
+            role="switch"
+            aria-checked={mode === "pro"}
+            aria-label="Toggle Pro Mode"
+            class="h-4 w-4 accent-blue-600"
+            on:change={(e) => {
+              mode = e.currentTarget.checked ? "pro" : "kid";
+              logs = [];
+            }}
+          />
+          {mode === "pro" ? "Pro Mode" : "Kid Mode"}
+        </label>
+        <button
+          class="btn-neutral text-xs px-3 py-2"
+          aria-label="Toggle dark mode"
+          on:click={toggleTheme}
+        >
+          Theme
+        </button>
+      </div>
+    </div>
   </header>
 
   <section
-    class="rounded-xl border border-gray-200 bg-white shadow-sm dark:bg-gray-900 dark:border-gray-800 p-3 md:p-4"
+    class="surface shadow-sm p-3 md:p-5 relative overflow-hidden"
     aria-label="Simulation stage and controls"
   >
+    <div
+      class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.15),transparent_60%)]"
+    ></div>
     <Stage bind:api={stageApi} {mode} />
   </section>
 
-  <section class="flex flex-wrap items-center gap-3">
-    <select
-      class="px-3 py-2 rounded-md bg-gray-50 dark:bg-gray-800"
-      bind:value={scenario}
-      on:change={onRestart}
-      aria-label="Choose scenario"
-    >
-      <option value="two-logs">Two Logs</option>
-      <option value="timer-vs-promise">Timer vs Promise</option>
-      <option value="fetch-robot">Fetch Robot</option>
-    </select>
+  <section class="flex flex-col gap-4">
+    <Controls
+      {running}
+      {speed}
+      {scenario}
+      {soundOn}
+      {onPlay}
+      {onPause}
+      {onRestart}
+      onScenarioChange={(v) => {
+        scenario = v;
+        onRestart();
+      }}
+      onSpeedChange={(v) => (speed = v)}
+      onSoundToggle={(v) => (soundOn = v)}
+    />
 
-    <button
-      class="px-4 py-2 rounded-md bg-blue-600 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      on:click={onPlay}
-      aria-pressed={running}
-      aria-label="Play">Play</button
-    >
-    <button
-      class="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      on:click={onPause}
-      aria-label="Pause">Pause</button
-    >
-    <button
-      class="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      on:click={onRestart}
-      aria-label="Restart">Restart</button
-    >
-
-    <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-      <input type="checkbox" bind:checked={soundOn} /> Sound
-    </label>
-
-    <label class="ml-auto flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-      Speed
-      <input
-        type="range"
-        min="0.25"
-        max="3"
-        step="0.25"
-        bind:value={speed}
-        class="accent-blue-600"
-      />
-      <span class="w-10 text-right">{speed}×</span>
-    </label>
-  </section>
-
-  <section
-    aria-live="polite"
-    class="text-base md:text-lg text-gray-700 dark:text-gray-200"
-    aria-atomic="true"
-    data-testid="narration"
-  >
-    {narration}
+    <div class="flex flex-col gap-4 md:flex-row md:items-start md:gap-8">
+      <section
+        aria-live="polite"
+        class="flex-1 text-base md:text-lg text-gray-700 dark:text-gray-200 font-medium"
+        aria-atomic="true"
+        data-testid="narration"
+      >
+        {narration}
+      </section>
+      <div class="md:w-1/3" aria-label="Legend container">
+        <Legend {mode} />
+      </div>
+    </div>
   </section>
 
   {#if mode === "pro"}
-    <aside class="grid gap-2 md:grid-cols-2" aria-label="Pro Mode Panels">
-      <div
-        class="rounded-lg border border-gray-200 dark:border-gray-800 p-3 bg-white dark:bg-gray-900"
-      >
-        <h2 class="font-semibold mb-2">Logs</h2>
-        <div class="h-40 overflow-auto text-sm space-y-1" data-testid="logs">
+    <aside class="grid gap-5 md:grid-cols-2" aria-label="Pro Mode Panels">
+      <div class="surface-alt p-4 shadow-sm">
+        <h2 class="panel-title mb-2">Logs</h2>
+        <div
+          class="h-48 overflow-auto text-xs md:text-sm space-y-1 font-mono pr-1"
+          data-testid="logs"
+        >
           {#each logs as item}
-            <div class="font-mono text-gray-700 dark:text-gray-300">
+            <div class="text-gray-700 dark:text-gray-300">
               {new Date(item.t).toLocaleTimeString()} — {item.msg}
             </div>
           {/each}
@@ -239,14 +265,14 @@
           {/if}
         </div>
       </div>
-      <div
-        class="rounded-lg border border-gray-200 dark:border-gray-800 p-3 bg-white dark:bg-gray-900"
-      >
-        <h2 class="font-semibold mb-2">Tips</h2>
-        <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
-          <li>Parser → Ignition compiles quickly; TurboFan optimizes hot code.</li>
-          <li>Promises run before timers in the same tick.</li>
-          <li>GC pauses are rare; think of a tiny cleaning robot.</li>
+      <div class="surface-alt p-4 shadow-sm">
+        <h2 class="panel-title mb-2">Tips</h2>
+        <ul
+          class="list-disc list-inside text-xs md:text-sm text-gray-700 dark:text-gray-300 leading-relaxed space-y-1"
+        >
+          <li>Parser → Ignition compiles quickly; TurboFan optimizes hot code paths.</li>
+          <li>Promises (microtasks) always run before timers (macrotasks) in a turn.</li>
+          <li>GC is like a tiny robot tidying memory spaces between tasks.</li>
         </ul>
       </div>
     </aside>
