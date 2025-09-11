@@ -60,4 +60,14 @@ test.describe("Hi-Fi Mode", () => {
     const timeline = page.locator(".timeline");
     await expect(timeline).toHaveAttribute("data-empty", "true");
   });
+
+  // Additional test: toggling back to Basic view cleans up Hi-Fi DOM
+  test("toggle back to basic view removes hf-grid", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Toggle High Fidelity View" }).click();
+    await expect(page.locator(".hf-grid")).toBeVisible();
+    // Toggle back
+    await page.getByRole("button", { name: "Toggle High Fidelity View" }).click();
+    await expect(page.locator(".hf-grid")).toHaveCount(0);
+  });
 });

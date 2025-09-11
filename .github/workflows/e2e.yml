@@ -1,31 +1,29 @@
 name: E2E
-
 on:
+  push:
+    branches: [main, feature/**]
   pull_request:
-  workflow_dispatch:
+    branches: [main]
 
 jobs:
   e2e:
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
+      - uses: actions/checkout@v4
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version: 20
           cache: npm
-
       - name: Install dependencies
         run: npm ci
-
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
-
+        run: npx playwright install --with-deps ${{ matrix.browser }}
       - name: Run E2E tests
         env:
           CI: true
-        run: |
-          npx playwright test --reporter=list
+        run: npx playwright test --project=${{ matrix.browser }} --reporter=list
