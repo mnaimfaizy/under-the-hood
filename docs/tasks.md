@@ -154,6 +154,23 @@ Owner: TBD | Effort: Small | Depends on: MVP
 - Short glossary (Kid vs Pro)
 - LICENSE (MIT suggested)
 - Acceptance: Docs reviewed; repo ready for public.
+ 
+Status: Complete ✅
+
+Changes in this task:
+
+- Added MIT license file at `LICENSE` and set project licensing expectations.
+- Updated `README.md` with:
+  - How to run locally, build, and preview
+  - List of included scenarios and where to find docs
+  - Link to new glossary and License
+- Added `docs/glossary.md` with Kid and Pro definitions.
+
+Acceptance verification:
+
+- README now includes requirements, install/run/build steps, scenarios, and links.
+- Glossary exists and matches metaphors used in UI and docs.
+- License file present (MIT) and referenced from README.
 
 ---
 
