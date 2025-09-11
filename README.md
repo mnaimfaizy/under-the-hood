@@ -1,6 +1,7 @@
 # Under the Hood: JavaScript Visualizer
 
 [![CI](https://github.com/mnaimfaizy/under-the-hood/actions/workflows/ci.yml/badge.svg)](https://github.com/mnaimfaizy/under-the-hood/actions/workflows/ci.yml)
+[![E2E](https://github.com/mnaimfaizy/under-the-hood/actions/workflows/e2e.yml/badge.svg)](https://github.com/mnaimfaizy/under-the-hood/actions/workflows/e2e.yml)
 
 Interactive visualizer for the JavaScript event loop, built with Svelte, Vite, Tailwind, and GSAP.
 
@@ -24,6 +25,13 @@ Build:
 npm run build
 npm run preview
 ```
+
+## Quality
+
+- Lint: `npm run lint` (ESLint for JS/TS/Svelte)
+- Format check: `npm run format` (Prettier)
+- Unit tests: `npm run test:unit`
+- E2E: `npm run test:e2e`
 
 ## Handoff tasks
 

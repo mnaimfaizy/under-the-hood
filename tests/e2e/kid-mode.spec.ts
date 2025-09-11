@@ -9,16 +9,11 @@ import { test, expect } from "@playwright/test";
  */
 
 test.describe("Kid Mode scenarios", () => {
-  test("Timer vs Promise shows microtasks before macrotasks", async ({
-    page,
-  }) => {
+  test("Timer vs Promise shows microtasks before macrotasks", async ({ page }) => {
     await page.goto("/");
 
     // choose scenario if not default
-    await page.selectOption(
-      'select[aria-label="Choose scenario"]',
-      "timer-vs-promise"
-    );
+    await page.selectOption('select[aria-label="Choose scenario"]', "timer-vs-promise");
 
     // click play
     await page.getByRole("button", { name: "Play" }).click();
