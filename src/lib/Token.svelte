@@ -38,7 +38,7 @@
   });
 </script>
 
-<g bind:this={tokenEl} style="cursor: pointer;" tabindex="0" role="img" aria-label={`${label} token`}>
+<g bind:this={tokenEl} style="cursor: pointer;" role="img" aria-label={`${label} token`}>
   <rect x="-40" y="-24" width="80" height="48" rx="16" fill={color} stroke="#333" stroke-width="2" />
   <text x="-28" y="6" font-size="24">{icons[kind]}</text>
   <text x="0" y="6" font-size="18" text-anchor="middle">{label}</text>
@@ -46,9 +46,5 @@
 
 <style>
   /* Add focus/contrast styles for accessibility */
-  :global(g[tabindex="0"]:focus) rect {
-    outline: none;
-    stroke: #2563eb;
-    stroke-width: 3;
-  }
+  /* If we later make tokens focusable, add focus ring styles here */
 </style>
