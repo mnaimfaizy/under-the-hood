@@ -6,7 +6,7 @@ export function createRunner(options: RunnerOptions) {
   let index = 0;
   let playing = false;
   let timer: any = null;
-  const speed = options.speed ?? 1000;
+  let delay = options.speed ?? 1000; // ms per step
 
   function emit(event: SimEvent) {
     options.onEvent(event);
@@ -24,12 +24,12 @@ export function createRunner(options: RunnerOptions) {
   function play() {
     if (playing) return;
     playing = true;
-    timer = setInterval(() => {
+  timer = setInterval(() => {
       step();
       if (index >= scenario.length) {
         pause();
       }
-    }, speed);
+  }, delay);
   }
 
   function pause() {
@@ -48,5 +48,14 @@ export function createRunner(options: RunnerOptions) {
     scenario = newScenario;
   }
 
-  return { play, pause, step, reset, load };
+  function setSpeed(msPerStep: number) {
+    // Update delay and restart timer if currently playing
+    delay = Math.max(1, msPerStep);
+    if (playing) {
+      pause();
+      play();
+    }
+  }
+
+  return { play, pause, step, reset, load, setSpeed };
 }

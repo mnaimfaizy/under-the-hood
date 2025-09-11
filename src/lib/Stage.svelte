@@ -1,6 +1,8 @@
 <script>
   export let width = 960;
   export let height = 540;
+  // Expose methods to parent via bind:api
+  export let api = {};
 
   // Anchor points for each block (center positions)
   const anchorMap = {
@@ -26,7 +28,7 @@
   import gsap from 'gsap';
   import { onMount } from 'svelte';
 
-  // Token state: { id, kind, label, color, x, y }
+  // Token state: { id, type, label, color, x, y }
   let tokens = [];
 
   // Master GSAP timeline
@@ -37,52 +39,73 @@
    * Handles a simulation event and animates tokens accordingly.
    * @param {object} event - Simulation event
    */
-  export function handleSimEvent(event) {
-    // Example event: { type: 'push_stack', token }
-    // Map event type to token movement
-    let targetBlock = null;
-    switch (event.type) {
-      case 'push_stack':
-        targetBlock = 'callStack';
-        break;
-      case 'offload_to_webapi':
-        targetBlock = 'webAPIs';
-        break;
-      case 'enqueue_micro':
-        targetBlock = 'microtaskQueue';
-        break;
-      case 'enqueue_macro':
-        targetBlock = 'macrotaskQueue';
-        break;
-      case 'loop_cycle_start':
-        targetBlock = 'eventLoop';
-        break;
-      default:
-        targetBlock = null;
-    }
-    if (targetBlock && event.token) {
-      // Find or add token
-      let idx = tokens.findIndex(t => t.id === event.token.id);
-      if (idx === -1) {
-        tokens.push({ ...event.token, ...getAnchor(targetBlock) });
-        idx = tokens.length - 1;
-      } else {
-        // Animate token to new position
-        timeline.to(tokens[idx], {
-          x: getAnchor(targetBlock).x,
-          y: getAnchor(targetBlock).y,
-          duration: 0.5,
-          ease: 'power2.inOut',
-        }, '+=0');
+  // Instance methods (accessible via bind:this)
+  function handleSimEvent(event) {
+    // Map SimEvent types from scenarios.ts to motion targets
+    if (event.type === 'token-move' && event.token) {
+      let targetBlock = null;
+      switch (event.to) {
+        case 'call-stack':
+        case 'call_stack':
+        case 'callstack':
+          targetBlock = 'callStack';
+          break;
+        case 'web-api':
+        case 'webapi':
+        case 'web_api':
+          targetBlock = 'webAPIs';
+          break;
+        case 'microtask-queue':
+        case 'microtask_queue':
+        case 'micro':
+          targetBlock = 'microtaskQueue';
+          break;
+        case 'macrotask-queue':
+        case 'macrotask_queue':
+        case 'macro':
+          targetBlock = 'macrotaskQueue';
+          break;
+        default:
+          targetBlock = null;
+      }
+      if (targetBlock) {
+        const anchor = getAnchor(targetBlock);
+        const toKind = (type) => {
+          switch (type) {
+            case 'timer':
+            case 'macrotask':
+              return 'macro';
+            case 'promise':
+            case 'microtask':
+              return 'micro';
+            case 'fetch':
+              return 'webapi';
+            default:
+              return 'sync';
+          }
+        };
+        let idx = tokens.findIndex(t => t.id === event.token.id);
+        if (idx === -1) {
+          tokens = [
+            ...tokens,
+            { id: event.token.id, kind: toKind(event.token.type), label: event.token.label, color: event.token.color, x: anchor.x, y: anchor.y }
+          ];
+        } else {
+          tokens = tokens.map((t, i) => i === idx ? { ...t, x: anchor.x, y: anchor.y } : t);
+        }
       }
     }
   }
 
   // Expose timeline controls
-  export function playTimeline() { timeline.play(); }
-  export function pauseTimeline() { timeline.pause(); }
-  export function stepTimeline() { timeline.seek(timeline.time() + 0.5); }
-  export function resetTimeline() { timeline.seek(0).pause(); }
+  function playTimeline() { timeline.play(); }
+  function pauseTimeline() { timeline.pause(); }
+  function stepTimeline() { timeline.seek(timeline.time() + 0.5); }
+  function resetTimeline() { timeline.seek(0).pause(); }
+  function resetTokens() { tokens = []; }
+
+  // Bind API for parent
+  api = { handleSimEvent, playTimeline, pauseTimeline, stepTimeline, resetTimeline, resetTokens };
 </script>
 
 <svg {width} {height} viewBox={`0 0 ${width} ${height}`} class="w-full h-auto">
