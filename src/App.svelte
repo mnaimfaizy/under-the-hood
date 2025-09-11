@@ -4,7 +4,12 @@
   import Controls from "./lib/Controls.svelte";
   import Legend from "./lib/Legend.svelte";
   import { createRunner } from "./lib/sim/engine";
-  import { scenarioTimerVsPromise, scenarioTwoLogs, scenarioFetchRobot, scenarioHiFiBasic } from "./lib/sim/scenarios";
+  import {
+    scenarioTimerVsPromise,
+    scenarioTwoLogs,
+    scenarioFetchRobot,
+    scenarioHiFiBasic,
+  } from "./lib/sim/scenarios";
 
   // UI state
   let speed = 1; // 1x
