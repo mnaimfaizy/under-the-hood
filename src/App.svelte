@@ -136,9 +136,9 @@
       <option value="fetch-robot">Fetch Robot</option>
     </select>
 
-    <button class="px-4 py-2 rounded-md bg-blue-600 text-white" on:click={onPlay} aria-pressed={running}>Play</button>
-    <button class="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-800" on:click={onPause}>Pause</button>
-    <button class="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-800" on:click={onRestart}>Restart</button>
+  <button class="px-4 py-2 rounded-md bg-blue-600 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" on:click={onPlay} aria-pressed={running} aria-label="Play">Play</button>
+  <button class="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" on:click={onPause} aria-label="Pause">Pause</button>
+  <button class="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" on:click={onRestart} aria-label="Restart">Restart</button>
 
     <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
       <input type="checkbox" bind:checked={soundOn} /> Sound
@@ -151,7 +151,7 @@
     </label>
   </section>
 
-  <section aria-live="polite" class="text-base md:text-lg text-gray-700 dark:text-gray-200" aria-atomic="true">
+  <section aria-live="polite" class="text-base md:text-lg text-gray-700 dark:text-gray-200" aria-atomic="true" data-testid="narration">
     {narration}
   </section>
 </main>
