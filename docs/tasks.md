@@ -51,22 +51,21 @@ Owner: Complete ✅ | Effort: Medium | Depends on: None
 
 Owner: TBD | Effort: Medium | Depends on: T1
 
-### T2.1 Block anchors and layout map
+### T2 — Visual Layer Integration
 
-- Expose anchor points for Stage blocks (from/to positions) in `Stage.svelte` via a mapping export or store.
-- Acceptance: A function `getAnchor(name)` returns SVG coords for blocks.
+Owner: Complete ✅ | Effort: Medium | Depends on: T1
 
-### T2.2 Token renderer
+#### T2.1 Block anchors and layout map
 
-- `src/lib/Token.svelte`: rounded rectangle + icon (⏱ timer, 🔗 promise, 🌐 fetch) + label.
-- Accepts `x,y` and transitions via GSAP.
-- Acceptance: Token can move between two anchors smoothly.
+**[✔️ Complete]** Anchor points exposed in `Stage.svelte` via mapping and `getAnchor(name)` function.
 
-### T2.3 Event → Motion mapper
+#### T2.2 Token renderer
 
-- Map simulation events to GSAP timeline actions.
-- Keep a single master timeline and expose play/pause/step.
-- Acceptance: “Timer vs Promise” visually shows microtasks draining before the timeout runs.
+**[✔️ Complete]** `Token.svelte` renders tokens with icon, label, and GSAP movement.
+
+#### T2.3 Event → Motion mapper
+
+**[✔️ Complete]** Simulation events mapped to GSAP timeline actions; master timeline and controls scaffolded.
 
 ---
 
