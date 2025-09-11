@@ -71,29 +71,29 @@ Owner: Complete ✅ | Effort: Medium | Depends on: T1
 
 ## T3 — Controls & Narration
 
-Owner: TBD | Effort: Small | Depends on: T1, T2
+Owner: Complete ✅ | Effort: Small | Depends on: T1, T2
 
 ### T3.1 Wire controls to runner
 
-- Hook Play/Pause/Restart/Speed to runner API in `App.svelte`.
-- Acceptance: Buttons control the animation deterministically.
+**[✔️ Complete]** Hook Play/Pause/Restart/Speed to runner API in `App.svelte`.
+**[✔️ Complete]** Acceptance: Buttons control the animation deterministically.
 
 ### T3.2 Narration script
 
-- Map each major step to a Kid-friendly one-liner.
-- Aria-live updates; optional sound cue (muted by default).
-- Acceptance: Narration changes on each step; accessible.
+**[✔️ Complete]** Map each major step to a Kid-friendly one-liner.
+**[✔️ Complete]** Aria-live updates; optional sound cue (muted by default).
+**[✔️ Complete]** Acceptance: Narration changes on each step; accessible.
 
 ---
 
 ## T4 — Kid Mode Scenarios (MVP)
 
-Owner: TBD | Effort: Small-Medium | Depends on: T1–T3
+Owner: Complete ✅ | Effort: Small-Medium | Depends on: T1–T3
 
-- Scenario 1: Two Logs (sync order)
-- Scenario 2: Timer vs Promise (microtask priority)
-- Scenario 3: Fetch Robot (offload → enqueue later)
-- Acceptance: Each scenario selectable and plays end-to-end correctly.
+**[✔️ Complete]** Scenario 1: Two Logs (sync order)
+**[✔️ Complete]** Scenario 2: Timer vs Promise (microtask priority)
+**[✔️ Complete]** Scenario 3: Fetch Robot (offload → enqueue later)
+**[✔️ Complete]** Acceptance: Each scenario selectable and plays end-to-end correctly.
 
 ---
 
