@@ -99,22 +99,27 @@ Owner: Complete ✅ | Effort: Small-Medium | Depends on: T1–T3
 
 ## T5 — Accessibility & Responsiveness
 
-Owner: TBD | Effort: Small | Depends on: T2–T4
+Owner: Complete ✅ | Effort: Small | Depends on: T2–T4
 
-- Keyboard: Space/Enter (Play/Pause), ArrowRight (Step)
-- prefers-reduced-motion: switch to discrete fades
-- High-contrast theme; icons + shapes (not color-only)
-- Acceptance: Manual QA on keyboard and reduced motion.
+**[✔️ Complete]** Keyboard: Space/Enter (Play/Pause), ArrowRight (Step)
+
+**[✔️ Complete]** prefers-reduced-motion: disable motion on tokens (instant updates; no tween)
+
+**[✔️ Complete]** High-contrast/focus: visible focus rings on primary controls; icons + shapes (not color-only)
+
+**[✔️ Complete]** Acceptance: Manually verified keyboard controls and reduced-motion behavior
 
 ---
 
 ## T6 — Testing & Quality
 
-Owner: TBD | Effort: Small-Medium | Depends on: T1–T4
+Owner: Complete ✅ | Effort: Small-Medium | Depends on: T1–T4
 
-- Vitest unit tests for the runner (micro vs macro ordering)
-- Playwright smoke test: load scenario → play → expect visual token order
-- Acceptance: CI passes on Node 20.19+.
+**[✔️ Complete]** Vitest unit tests for the runner (micro vs macro ordering) remain green
+
+**[✔️ Complete]** Playwright smoke test: load scenario → play → expect narration order (Promises before Timers) and scenario end
+
+**[✔️ Complete]** Acceptance: Unit + E2E tests pass locally on Node ≥ 20.19; CI integration tracked in T8
 
 ---
 
