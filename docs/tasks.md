@@ -137,12 +137,12 @@ Owner: Complete ✅ | Effort: Medium | Depends on: T1–T6
 
 ## T8 — Tooling & CI
 
-Owner: TBD | Effort: Small | Depends on: None
+Owner: Complete ✅ | Effort: Small | Depends on: None
 
-- ESLint/Prettier setup for Svelte
-- GitHub Actions: build + tests on push
-- Conventional commits or Husky pre-commit hook (optional)
-- Acceptance: CI badge in README; green build
+- ESLint/Prettier setup for Svelte — Complete
+- GitHub Actions: build + tests on push — Complete
+- Conventional commits or Husky pre-commit hook (optional) — Husky pre-commit added
+- Acceptance: CI badge in README; green build — Met
 
 ---
 

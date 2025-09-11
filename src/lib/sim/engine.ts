@@ -1,5 +1,5 @@
 // Simulation event loop runner (MVP)
-import type { SimEvent, RunnerOptions } from './types';
+import type { SimEvent, RunnerOptions } from "./types";
 
 export function createRunner(options: RunnerOptions) {
   let scenario: SimEvent[] = [];
@@ -24,12 +24,12 @@ export function createRunner(options: RunnerOptions) {
   function play() {
     if (playing) return;
     playing = true;
-  timer = setInterval(() => {
+    timer = setInterval(() => {
       step();
       if (index >= scenario.length) {
         pause();
       }
-  }, delay);
+    }, delay);
   }
 
   function pause() {

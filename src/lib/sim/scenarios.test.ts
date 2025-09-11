@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  scenarioTimerVsPromise,
-  scenarioTwoLogs,
-  scenarioFetchRobot,
-} from "./scenarios";
+import { scenarioTimerVsPromise, scenarioTwoLogs, scenarioFetchRobot } from "./scenarios";
 
 describe("Scenarios", () => {
   it("timer vs promise emits expected ordering and ends", () => {

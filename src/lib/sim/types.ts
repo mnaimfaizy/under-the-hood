@@ -4,7 +4,7 @@
  */
 export type Token = {
   id: string;
-  type: 'log' | 'timer' | 'promise' | 'fetch' | 'microtask' | 'macrotask';
+  type: "log" | "timer" | "promise" | "fetch" | "microtask" | "macrotask";
   label: string;
   color?: string;
   icon?: string;
@@ -14,11 +14,11 @@ export type Token = {
  * Simulation event types for the event loop.
  */
 export type SimEvent =
-  | { type: 'sync'; description: string }
-  | { type: 'microtask-drain'; description: string }
-  | { type: 'macrotask-run'; description: string }
-  | { type: 'token-move'; token: Token; from: string; to: string }
-  | { type: 'scenario-end' };
+  | { type: "sync"; description: string }
+  | { type: "microtask-drain"; description: string }
+  | { type: "macrotask-run"; description: string }
+  | { type: "token-move"; token: Token; from: string; to: string }
+  | { type: "scenario-end" };
 
 /**
  * Simulation runner API options.
