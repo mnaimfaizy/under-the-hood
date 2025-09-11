@@ -108,7 +108,7 @@
   api = { handleSimEvent, playTimeline, pauseTimeline, stepTimeline, resetTimeline, resetTokens };
 </script>
 
-<svg {width} {height} viewBox={`0 0 ${width} ${height}`} class="w-full h-auto">
+<svg {width} {height} viewBox={`0 0 ${width} ${height}`} class="w-full h-auto" role="img" aria-label="JavaScript runtime playground stage">
   <!-- Grid background -->
   <defs>
     <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
