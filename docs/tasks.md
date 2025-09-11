@@ -148,13 +148,13 @@ Owner: Complete ✅ | Effort: Small | Depends on: None
 
 ## T9 — Content & Docs
 
-Owner: TBD | Effort: Small | Depends on: MVP
+Owner: Complete ✅ | Effort: Small | Depends on: MVP
 
 - Update README with how-to-run and scenarios
 - Short glossary (Kid vs Pro)
 - LICENSE (MIT suggested)
 - Acceptance: Docs reviewed; repo ready for public.
- 
+
 Status: Complete ✅
 
 Changes in this task:
