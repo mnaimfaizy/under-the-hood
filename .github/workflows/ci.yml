@@ -2,23 +2,21 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/**]
   pull_request:
     branches: [main]
 
 jobs:
-  build:
+  lint_unit_build:
+    name: Lint • Unit • Build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.19.x, 22.x]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22.x
           cache: npm
       - name: Install dependencies
         run: npm ci
@@ -30,7 +28,28 @@ jobs:
         run: npm run test:unit --silent
       - name: Build
         run: npm run build --if-present
-      - name: E2E tests
-        run: |
-          npx playwright install --with-deps chromium
-          npx playwright test --reporter=list
+
+  e2e:
+    name: E2E (Playwright)
+    needs: lint_unit_build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Run E2E tests
+        env:
+          CI: true
+        run: npx playwright test --project=${{ matrix.browser }} --reporter=list
