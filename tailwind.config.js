@@ -1,8 +1,11 @@
-/**** Tailwind v4 placeholder config (using @import "tailwindcss" in app.css). ****/
+/** Tailwind v4 config (ESM). */
+import forms from "@tailwindcss/forms";
+import typography from "@tailwindcss/typography";
+
 export default {
   content: ["./index.html", "./src/**/*.{svelte,js,ts}"],
   theme: {
     extend: {},
   },
-  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
+  plugins: [forms, typography],
 };
