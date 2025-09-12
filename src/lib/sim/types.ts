@@ -4,7 +4,7 @@
  */
 export type Token = {
   id: string;
-  type: "log" | "timer" | "promise" | "fetch" | "microtask" | "macrotask";
+  type: "log" | "timer" | "promise" | "fetch" | "microtask" | "macrotask" | "async";
   label: string;
   color?: string;
   icon?: string;

@@ -23,6 +23,10 @@
       <option value="two-logs">Two Logs</option>
       <option value="timer-vs-promise">Timer vs Promise</option>
       <option value="fetch-robot">Fetch Robot</option>
+      <option value="microtask-chain">Microtask Chain</option>
+      <option value="nested-timeouts">Nested Timeouts</option>
+      <option value="async-await">Async/Await</option>
+      <option value="dom-click">DOM Click</option>
     </select>
   </div>
 
