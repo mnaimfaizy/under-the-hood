@@ -20,8 +20,8 @@ test.describe("Kid Mode scenarios", () => {
 
     // wait for narration to mention microtasks then macrotasks
     const narration = page.locator('[data-testid="narration"]');
-    await expect(narration).toContainText("Promises");
-    await expect(narration).toContainText("Timers");
+    await expect(narration).toContainText("Promise runs first");
+    await expect(narration).toContainText("Timer runs after microtasks");
 
     // eventually ends
     await expect(narration).toContainText("All done");
@@ -33,8 +33,8 @@ test.describe("Kid Mode scenarios", () => {
     await page.getByRole("button", { name: "Play" }).click();
 
     const narration = page.locator('[data-testid="narration"]');
-    await expect(narration).toContainText("VIP lane is busy");
-    await expect(narration).toContainText("Timer waits");
+    await expect(narration).toContainText("VIP lane is busy with promise friends");
+    await expect(narration).toContainText("Timer waits patiently");
     await expect(narration).toContainText("All done");
   });
 
@@ -44,9 +44,8 @@ test.describe("Kid Mode scenarios", () => {
     await page.getByRole("button", { name: "Play" }).click();
 
     const narration = page.locator('[data-testid="narration"]');
-    await expect(narration).toContainText("First timer");
-    await expect(narration).toContainText("Next timer");
-    await expect(narration).toContainText("Last timer");
+    await expect(narration).toContainText("Next timer in line goes");
+    await expect(narration).toContainText("Last timer in line goes");
     await expect(narration).toContainText("All done");
   });
 
@@ -57,7 +56,7 @@ test.describe("Kid Mode scenarios", () => {
 
     const narration = page.locator('[data-testid="narration"]');
     await expect(narration).toContainText("Async function begins");
-    await expect(narration).toContainText("Await resumes");
+    await expect(narration).toContainText("Await Resume moves to the microtask VIP lane");
     await expect(narration).toContainText("All done");
   });
 

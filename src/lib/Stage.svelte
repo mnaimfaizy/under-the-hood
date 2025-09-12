@@ -7,7 +7,7 @@
 
   // Anchor points for each block (center positions)
   const anchorMap = {
-    callStack: { x: 150, y: 130 },
+    callStack: { x: 120, y: 130 },
     webAPIs: { x: 810, y: 130 },
     microtaskQueue: { x: 180, y: 400 },
     macrotaskQueue: { x: 500, y: 400 },
@@ -144,44 +144,155 @@
   <rect width="100%" height="100%" fill="url(#grid)" />
 
   <!-- Placeholder blocks -->
-  <g role="group" aria-label="Call Stack block">
-    <rect x="40" y="60" width="220" height="140" rx="12" fill="#e0f2fe" stroke="#0284c7">
-      <title>Call Stack: where synchronous JS runs</title>
-    </rect>
-    <text x="150" y="135" text-anchor="middle" class="fill-black" font-size="18">Call Stack</text>
-  </g>
+  {#if mode === "kid"}
+    <!-- Kid Mode: Fun characters and shapes that fill the areas -->
+    <g role="group" aria-label="Task Robot - where tasks run one by one">
+      <!-- Robot factory background -->
+      <rect x="40" y="60" width="220" height="140" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="3">
+        <title>Task Robot: runs tasks in order</title>
+      </rect>
+      <!-- Robot: head, body, arms -->
+      <circle cx="110" cy="110" r="20" fill="#fbbf24" stroke="#d97706" stroke-width="2" />
+      <rect x="95" y="130" width="30" height="40" rx="6" fill="#f59e0b" stroke="#d97706" stroke-width="2" />
+      <rect x="85" y="140" width="10" height="25" rx="3" fill="#fbbf24" stroke="#d97706" stroke-width="2" />
+      <rect x="125" y="140" width="10" height="25" rx="3" fill="#fbbf24" stroke="#d97706" stroke-width="2" />
+      <!-- Eyes -->
+      <circle cx="105" cy="105" r="3" fill="#1f2937" />
+      <circle cx="115" cy="105" r="3" fill="#1f2937" />
+      <!-- Conveyor belt -->
+      <rect x="50" y="175" width="180" height="8" fill="#9ca3af" />
+      <rect x="50" y="175" width="20" height="8" fill="#6b7280" />
+      <rect x="80" y="175" width="20" height="8" fill="#6b7280" />
+      <rect x="110" y="175" width="20" height="8" fill="#6b7280" />
+      <rect x="140" y="175" width="20" height="8" fill="#6b7280" />
+      <rect x="170" y="175" width="20" height="8" fill="#6b7280" />
+      <text x="150" y="200" text-anchor="middle" class="fill-black" font-size="14">Task Robot</text>
+    </g>
 
-  <g role="group" aria-label="Web APIs block">
-    <rect x="700" y="60" width="220" height="140" rx="12" fill="#ecfccb" stroke="#65a30d">
-      <title>Web APIs: timers, fetch, and more</title>
-    </rect>
-    <text x="810" y="135" text-anchor="middle" class="fill-black" font-size="18">Web APIs</text>
-  </g>
+    <g role="group" aria-label="Magic Cloud - handles special tasks like timers">
+      <!-- Cloud background -->
+      <rect x="700" y="60" width="220" height="140" rx="12" fill="#dbeafe" stroke="#3b82f6" stroke-width="3">
+        <title>Magic Cloud: handles timers and web tasks</title>
+      </rect>
+      <!-- Cloud shape overlay -->
+      <path d="M 750 80 Q 730 70 750 80 Q 770 70 790 80 Q 810 70 790 80 Q 810 110 790 130 Q 770 140 750 130 Q 730 140 750 130 Q 730 110 750 80 Z" fill="#bfdbfe" stroke="#3b82f6" stroke-width="2" />
+      <!-- Server icons -->
+      <rect x="765" y="95" width="25" height="15" rx="2" fill="#1e40af" stroke="#1e3a8a" stroke-width="1" />
+      <rect x="767" y="97" width="21" height="3" rx="1" fill="#60a5fa" />
+      <rect x="767" y="102" width="21" height="3" rx="1" fill="#60a5fa" />
+      <rect x="767" y="107" width="21" height="3" rx="1" fill="#60a5fa" />
+      <!-- Lightning bolts -->
+      <path d="M 780 85 L 785 90 L 783 90 L 788 95 L 786 95 L 791 100" stroke="#fbbf24" stroke-width="2" fill="none" />
+      <path d="M 820 85 L 825 90 L 823 90 L 828 95 L 826 95 L 831 100" stroke="#fbbf24" stroke-width="2" fill="none" />
+      <text x="810" y="200" text-anchor="middle" class="fill-black" font-size="14">Magic Cloud</text>
+    </g>
 
-  <g role="group" aria-label="Microtask Queue block">
-    <rect x="40" y="340" width="280" height="120" rx="12" fill="#fef3c7" stroke="#d97706">
-      <title>Microtask Queue: promises first</title>
-    </rect>
-    <text x="180" y="405" text-anchor="middle" class="fill-black" font-size="18"
-      >Microtask Queue</text
-    >
-  </g>
+    <g role="group" aria-label="Speedy Lane - quick tasks like promises">
+      <!-- Fast lane background -->
+      <rect x="40" y="340" width="280" height="120" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="3">
+        <title>Speedy Lane: quick promise tasks</title>
+      </rect>
+      <!-- Road markings -->
+      <rect x="50" y="380" width="260" height="4" fill="#d97706" />
+      <rect x="50" y="390" width="260" height="4" fill="#d97706" />
+      <rect x="50" y="400" width="260" height="4" fill="#d97706" />
+      <!-- Speed signs -->
+      <polygon points="80,365 90,355 100,365 90,375" fill="#ef4444" stroke="#dc2626" stroke-width="2" />
+      <text x="90" y="372" text-anchor="middle" fill="white" font-size="12" font-weight="bold">!</text>
+      <polygon points="200,365 210,355 220,365 210,375" fill="#ef4444" stroke="#dc2626" stroke-width="2" />
+      <text x="210" y="372" text-anchor="middle" fill="white" font-size="12" font-weight="bold">!</text>
+      <!-- Race car -->
+      <rect x="120" y="385" width="40" height="15" rx="5" fill="#ef4444" />
+      <circle cx="130" cy="400" r="5" fill="#1f2937" />
+      <circle cx="150" cy="400" r="5" fill="#1f2937" />
+      <text x="180" y="445" text-anchor="middle" class="fill-black" font-size="14">Speedy Lane</text>
+    </g>
 
-  <g role="group" aria-label="Macrotask Queue block">
-    <rect x="360" y="340" width="280" height="120" rx="12" fill="#fee2e2" stroke="#ef4444">
-      <title>Macrotask Queue: timers and more</title>
-    </rect>
-    <text x="500" y="405" text-anchor="middle" class="fill-black" font-size="18"
-      >Macrotask Queue</text
-    >
-  </g>
+    <g role="group" aria-label="Waiting Line - regular tasks like timers">
+      <!-- Queue background -->
+      <rect x="360" y="340" width="280" height="120" rx="12" fill="#fee2e2" stroke="#ef4444" stroke-width="3">
+        <title>Waiting Line: regular tasks wait here</title>
+      </rect>
+      <!-- People in line -->
+      <circle cx="400" cy="385" r="8" fill="#fbbf24" stroke="#d97706" />
+      <rect x="395" y="393" width="10" height="15" fill="#fbbf24" stroke="#d97706" />
+      <circle cx="430" cy="385" r="8" fill="#fbbf24" stroke="#d97706" />
+      <rect x="425" y="393" width="10" height="15" fill="#fbbf24" stroke="#d97706" />
+      <circle cx="460" cy="385" r="8" fill="#fbbf24" stroke="#d97706" />
+      <rect x="455" y="393" width="10" height="15" fill="#fbbf24" stroke="#d97706" />
+      <circle cx="490" cy="385" r="8" fill="#fbbf24" stroke="#d97706" />
+      <rect x="485" y="393" width="10" height="15" fill="#fbbf24" stroke="#d97706" />
+      <circle cx="520" cy="385" r="8" fill="#fbbf24" stroke="#d97706" />
+      <rect x="515" y="393" width="10" height="15" fill="#fbbf24" stroke="#d97706" />
+      <!-- Queue arrows -->
+      <path d="M 550 380 L 570 380 L 565 375 M 570 380 L 565 385" stroke="#ef4444" stroke-width="2" fill="none" />
+      <text x="500" y="445" text-anchor="middle" class="fill-black" font-size="14">Waiting Line</text>
+    </g>
 
-  <g role="group" aria-label="Event Loop block">
-    <rect x="680" y="340" width="240" height="120" rx="12" fill="#ede9fe" stroke="#7c3aed">
-      <title>Event Loop: picks what runs next</title>
-    </rect>
-    <text x="800" y="405" text-anchor="middle" class="fill-black" font-size="18">Event Loop</text>
-  </g>
+    <g role="group" aria-label="Magic Conveyor - moves tasks around">
+      <!-- Conveyor background -->
+      <rect x="680" y="340" width="240" height="120" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="3">
+        <title>Magic Conveyor: moves tasks to run</title>
+      </rect>
+      <!-- Conveyor belt -->
+      <rect x="690" y="390" width="220" height="8" fill="#9ca3af" />
+      <!-- Moving segments -->
+      <rect x="690" y="390" width="15" height="8" fill="#6b7280" />
+      <rect x="715" y="390" width="15" height="8" fill="#6b7280" />
+      <rect x="740" y="390" width="15" height="8" fill="#6b7280" />
+      <rect x="765" y="390" width="15" height="8" fill="#6b7280" />
+      <rect x="790" y="390" width="15" height="8" fill="#6b7280" />
+      <rect x="815" y="390" width="15" height="8" fill="#6b7280" />
+      <rect x="840" y="390" width="15" height="8" fill="#6b7280" />
+      <rect x="865" y="390" width="15" height="8" fill="#6b7280" />
+      <!-- Control panel -->
+      <rect x="720" y="360" width="60" height="20" rx="3" fill="#6b7280" />
+      <circle cx="735" cy="370" r="3" fill="#10b981" />
+      <circle cx="750" cy="370" r="3" fill="#10b981" />
+      <circle cx="765" cy="370" r="3" fill="#10b981" />
+      <text x="800" y="445" text-anchor="middle" class="fill-black" font-size="14">Magic Conveyor</text>
+    </g>
+  {:else}
+    <!-- Pro Mode: Simple blocks -->
+    <g role="group" aria-label="Call Stack block">
+      <rect x="40" y="60" width="220" height="140" rx="12" fill="#e0f2fe" stroke="#0284c7">
+        <title>Call Stack: where synchronous JS runs</title>
+      </rect>
+      <text x="150" y="135" text-anchor="middle" class="fill-black" font-size="18">Call Stack</text>
+    </g>
+
+    <g role="group" aria-label="Web APIs block">
+      <rect x="700" y="60" width="220" height="140" rx="12" fill="#ecfccb" stroke="#65a30d">
+        <title>Web APIs: timers, fetch, and more</title>
+      </rect>
+      <text x="810" y="135" text-anchor="middle" class="fill-black" font-size="18">Web APIs</text>
+    </g>
+
+    <g role="group" aria-label="Microtask Queue block">
+      <rect x="40" y="340" width="280" height="120" rx="12" fill="#fef3c7" stroke="#d97706">
+        <title>Microtask Queue: promises first</title>
+      </rect>
+      <text x="180" y="405" text-anchor="middle" class="fill-black" font-size="18"
+        >Microtask Queue</text
+      >
+    </g>
+
+    <g role="group" aria-label="Macrotask Queue block">
+      <rect x="360" y="340" width="280" height="120" rx="12" fill="#fee2e2" stroke="#ef4444">
+        <title>Macrotask Queue: timers and more</title>
+      </rect>
+      <text x="500" y="405" text-anchor="middle" class="fill-black" font-size="18"
+        >Macrotask Queue</text
+      >
+    </g>
+
+    <g role="group" aria-label="Event Loop block">
+      <rect x="680" y="340" width="240" height="120" rx="12" fill="#ede9fe" stroke="#7c3aed">
+        <title>Event Loop: picks what runs next</title>
+      </rect>
+      <text x="800" y="405" text-anchor="middle" class="fill-black" font-size="18">Event Loop</text>
+    </g>
+  {/if}
 
   {#if mode === "pro"}
     <!-- Pro Mode panels: Engine pipeline & Heap/GC preview -->
