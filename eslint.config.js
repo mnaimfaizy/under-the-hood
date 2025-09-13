@@ -18,6 +18,7 @@ export default [
         extraFileExtensions: [".svelte"],
       },
       globals: {
+        // Browser environment
         document: "readonly",
         window: "readonly",
         console: "readonly",
@@ -25,9 +26,20 @@ export default [
         clearTimeout: "readonly",
         setInterval: "readonly",
         clearInterval: "readonly",
-        process: "readonly",
         requestAnimationFrame: "readonly",
+        cancelAnimationFrame: "readonly",
+        performance: "readonly",
         AbortController: "readonly",
+        // DOM types
+        HTMLElement: "readonly",
+        HTMLCanvasElement: "readonly",
+        MouseEvent: "readonly",
+        TouchEvent: "readonly",
+        KeyboardEvent: "readonly",
+        Event: "readonly",
+        EventTarget: "readonly",
+        // Node.js
+        process: "readonly",
       },
     },
     plugins: {

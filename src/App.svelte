@@ -1,6 +1,7 @@
 <script>
   import Stage from "./lib/Stage.svelte";
   import HighFidelityStage from "./lib/HighFidelityStage.svelte";
+  import SimpleTest3D from "./lib/three/SimpleTest3D.svelte";
   import Controls from "./lib/Controls.svelte";
   import Legend from "./lib/Legend.svelte";
   import { createRunner } from "./lib/sim/engine";
@@ -232,13 +233,19 @@
         <button
           class="btn-neutral text-xs px-3 py-2"
           on:click={() => {
-            mode = mode === "hifi" ? "kid" : "hifi";
+            if (mode === "hifi") {
+              mode = "3d";
+            } else if (mode === "3d") {
+              mode = "kid";
+            } else {
+              mode = "hifi";
+            }
             logs = [];
             loadSelectedScenario();
           }}
-          aria-label="Toggle High Fidelity View"
+          aria-label="Toggle View Mode"
         >
-          {mode === "hifi" ? "Basic View" : "Hi-Fi View"}
+          {mode === "hifi" ? "Hi-Fi View" : mode === "3d" ? "3D View" : "Basic View"}
         </button>
         <button
           class="btn-neutral text-xs px-3 py-2"
@@ -268,6 +275,8 @@
           }
         }}
       />
+    {:else if mode === "3d"}
+      <SimpleTest3D />
     {:else}
       <Stage bind:api={stageApi} {mode} />
     {/if}
