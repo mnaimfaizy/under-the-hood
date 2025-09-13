@@ -3,6 +3,7 @@
   import HighFidelityStage from "./lib/HighFidelityStage.svelte";
   import SimpleTest3D from "./lib/three/SimpleTest3D.svelte";
   import CallStackDemo from "./lib/three/CallStackDemo.svelte";
+  import WebAPIDemo from "./lib/three/WebAPIDemo.svelte";
   import Controls from "./lib/Controls.svelte";
   import Legend from "./lib/Legend.svelte";
   import { createRunner } from "./lib/sim/engine";
@@ -239,6 +240,8 @@
             } else if (mode === "3d") {
               mode = "callstack";
             } else if (mode === "callstack") {
+              mode = "webapi";
+            } else if (mode === "webapi") {
               mode = "kid";
             } else {
               mode = "hifi";
@@ -254,7 +257,9 @@
               ? "3D Test"
               : mode === "callstack"
                 ? "CallStack"
-                : "Basic"}
+                : mode === "webapi"
+                  ? "WebAPI"
+                  : "Basic"}
         </button>
         <button
           class="btn-neutral text-xs px-3 py-2"
@@ -288,6 +293,8 @@
       <SimpleTest3D />
     {:else if mode === "callstack"}
       <CallStackDemo />
+    {:else if mode === "webapi"}
+      <WebAPIDemo />
     {:else}
       <Stage bind:api={stageApi} {mode} />
     {/if}
