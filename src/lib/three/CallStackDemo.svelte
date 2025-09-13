@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { CallStack3D } from "../components/CallStack3D.ts";
+  import { CallStack3D } from "./components/CallStack3D";
 
   let canvasElement;
   let scene, camera, renderer;
@@ -9,17 +9,17 @@
 
   // Demo state
   let stackItems = [
-    { id: '1', label: 'main()', functionName: 'main', isActive: true },
-    { id: '2', label: 'fetchData()', functionName: 'fetchData', isActive: true },
-    { id: '3', label: 'parseJSON()', functionName: 'parseJSON', isActive: true },
+    { id: "1", label: "main()", functionName: "main", isActive: true },
+    { id: "2", label: "fetchData()", functionName: "fetchData", isActive: true },
+    { id: "3", label: "parseJSON()", functionName: "parseJSON", isActive: true },
   ];
-  
+
   let currentStackSize = 0;
 
   onMount(async () => {
     // Dynamically import Three.js
-    const THREE = await import('three');
-    
+    const THREE = await import("three");
+
     // Set up the scene
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0f0f23);
@@ -41,7 +41,7 @@
       maxFloors: 10,
       floorHeight: 0.8,
       floorSpacing: 0.2,
-      glowIntensity: 0.6
+      glowIntensity: 0.6,
     });
     scene.add(callStack);
 
@@ -63,9 +63,9 @@
 
     // Add a ground plane
     const planeGeometry = new THREE.PlaneGeometry(30, 30);
-    const planeMaterial = new THREE.MeshPhongMaterial({ 
+    const planeMaterial = new THREE.MeshPhongMaterial({
       color: 0x333333,
-      shininess: 10
+      shininess: 10,
     });
     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.rotation.x = -Math.PI / 2;
@@ -74,7 +74,7 @@
     scene.add(plane);
 
     // Add orbit controls
-    const { OrbitControls } = await import('three-orbitcontrols-ts');
+    const { OrbitControls } = await import("three-orbitcontrols-ts");
     const controls = new OrbitControls(camera, canvasElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
@@ -83,13 +83,13 @@
     // Start animation loop
     function animate() {
       animationId = requestAnimationFrame(animate);
-      
+
       controls.update();
-      
+
       if (callStack) {
         callStack.update(0.016); // Assume 60fps
       }
-      
+
       renderer.render(scene, camera);
     }
     animate();
@@ -102,7 +102,7 @@
         id: item.id,
         label: item.label,
         functionName: item.functionName,
-        isActive: true
+        isActive: true,
       });
       currentStackSize++;
     }
@@ -111,7 +111,7 @@
   function popFunction() {
     if (currentStackSize > 0 && callStack) {
       const popped = callStack.popFunction();
-      console.log('Popped function:', popped);
+      console.log("Popped function:", popped);
       currentStackSize--;
     }
   }
@@ -126,7 +126,7 @@
   function autoDemo() {
     // Clear first
     clearStack();
-    
+
     // Push functions one by one with delays
     setTimeout(() => pushFunction(), 500);
     setTimeout(() => pushFunction(), 1000);
@@ -160,37 +160,41 @@
       <button on:click={pushFunction} disabled={currentStackSize >= stackItems.length}>
         Push Function
       </button>
-      <button on:click={popFunction} disabled={currentStackSize <= 0}>
-        Pop Function  
-      </button>
-      <button on:click={clearStack}>
-        Clear Stack
-      </button>
-      <button on:click={autoDemo} class="demo-btn">
-        Auto Demo
-      </button>
+      <button on:click={popFunction} disabled={currentStackSize <= 0}> Pop Function </button>
+      <button on:click={clearStack}> Clear Stack </button>
+      <button on:click={autoDemo} class="demo-btn"> Auto Demo </button>
     </div>
   </div>
-  
+
   <div class="canvas-container">
     <canvas bind:this={canvasElement} width="800" height="600"></canvas>
-    
+
     <div class="stack-info">
       <h4>Stack Info:</h4>
       <p>Current Depth: {currentStackSize}</p>
-      <p>Next Function: {currentStackSize < stackItems.length ? stackItems[currentStackSize].functionName : 'None'}</p>
+      <p>
+        Next Function: {currentStackSize < stackItems.length
+          ? stackItems[currentStackSize].functionName
+          : "None"}
+      </p>
     </div>
   </div>
-  
+
   <div class="instructions">
     <h4>Interactive 3D Call Stack Tower:</h4>
     <ul>
-      <li><strong>Glass Tower:</strong> Each floor represents a function frame in the call stack</li>
-      <li><strong>Elevator:</strong> Red cube shows current execution context moving between floors</li>
+      <li>
+        <strong>Glass Tower:</strong> Each floor represents a function frame in the call stack
+      </li>
+      <li>
+        <strong>Elevator:</strong> Red cube shows current execution context moving between floors
+      </li>
       <li><strong>Glowing Floors:</strong> Active function frames glow with blue light</li>
       <li><strong>Function Labels:</strong> Function names appear on active floors</li>
       <li><strong>Controls:</strong> Mouse to rotate camera, wheel to zoom, right-click to pan</li>
-      <li><strong>Stack Operations:</strong> Use buttons to push/pop functions and see the tower animate</li>
+      <li>
+        <strong>Stack Operations:</strong> Use buttons to push/pop functions and see the tower animate
+      </li>
     </ul>
   </div>
 </div>
@@ -292,7 +296,7 @@
     color: white;
     padding: 1rem;
     border-radius: 8px;
-    font-family: 'Monaco', 'Menlo', monospace;
+    font-family: "Monaco", "Menlo", monospace;
     font-size: 0.875rem;
     backdrop-filter: blur(4px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -374,21 +378,21 @@
       gap: 1rem;
       align-items: stretch;
     }
-    
+
     .controls {
       justify-content: center;
     }
-    
+
     .controls button {
       flex: 1;
       min-width: 0;
     }
-    
+
     canvas {
       width: 100%;
       height: auto;
     }
-    
+
     .stack-info {
       position: relative;
       top: 1rem;

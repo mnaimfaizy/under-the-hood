@@ -248,7 +248,13 @@
           }}
           aria-label="Toggle View Mode"
         >
-          {mode === "hifi" ? "Hi-Fi" : mode === "3d" ? "3D Test" : mode === "callstack" ? "CallStack" : "Basic"}
+          {mode === "hifi"
+            ? "Hi-Fi"
+            : mode === "3d"
+              ? "3D Test"
+              : mode === "callstack"
+                ? "CallStack"
+                : "Basic"}
         </button>
         <button
           class="btn-neutral text-xs px-3 py-2"
