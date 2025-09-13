@@ -9,6 +9,10 @@
     scenarioTwoLogs,
     scenarioFetchRobot,
     scenarioHiFiBasic,
+    scenarioMicrotaskChain,
+    scenarioNestedTimeouts,
+    scenarioAsyncAwait,
+    scenarioDomClick,
   } from "./lib/sim/scenarios";
 
   // UI state
@@ -51,6 +55,10 @@
     if (scenario === "timer-vs-promise") runner.load(scenarioTimerVsPromise());
     else if (scenario === "two-logs") runner.load(scenarioTwoLogs());
     else if (scenario === "fetch-robot") runner.load(scenarioFetchRobot());
+    else if (scenario === "microtask-chain") runner.load(scenarioMicrotaskChain());
+    else if (scenario === "nested-timeouts") runner.load(scenarioNestedTimeouts());
+    else if (scenario === "async-await") runner.load(scenarioAsyncAwait());
+    else if (scenario === "dom-click") runner.load(scenarioDomClick());
   }
 
   loadSelectedScenario();
@@ -58,16 +66,16 @@
   function updateNarration(event) {
     switch (event.type) {
       case "sync":
-        narration = "JS is doing a step on the Call Stack.";
+        narration = event.description || "JS is doing a step on the Call Stack.";
         break;
       case "token-move":
         narration = friendlyMove(event);
         break;
       case "microtask-drain":
-        narration = "Promises zoom ahead in the VIP lane (microtasks)!";
+        narration = event.description || "Promises zoom ahead in the VIP lane (microtasks)!";
         break;
       case "macrotask-run":
-        narration = "Timers wait their turn in the big line (macrotasks).";
+        narration = event.description || "Timers wait their turn in the big line (macrotasks).";
         break;
       case "scenario-end":
         narration = "All done! Want to play again?";

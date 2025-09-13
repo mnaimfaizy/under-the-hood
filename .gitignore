@@ -9,6 +9,7 @@ vitest-output/
 .vercel
 .vscode/
 .idea/
+test-results/
 # Logs
 logs
 *.log
