@@ -35,19 +35,39 @@
   let currentScenario = "simple";
   let demoTokens: string[] = [];
 
+  // Physics state
+  let physicsEnabled = false;
+  let showParticles = true;
+  let magneticStrength = 10;
+  let gravityEnabled = true;
+  let collisionEnabled = true;
+
   const scenarios = {
     simple: "Simple Sync Function",
     promise: "Promise Chain",
     timer: "setTimeout Example",
     fetch: "Fetch API Call",
     mixed: "Mixed Async Operations",
+    physics: "Physics Playground",
+    collision: "Collision Demo",
+    magnetic: "Magnetic Fields",
   };
 
   onMount(() => {
-    initializeScene();
-    createRuntimeComponents();
-    setupTokenManager();
-    startAnimation();
+    console.log("TokenDemo mounted!");
+
+    // Wait for canvas to be ready
+    setTimeout(() => {
+      if (!canvas) {
+        console.error("Canvas not ready!");
+        return;
+      }
+
+      initializeScene();
+      createRuntimeComponents();
+      setupTokenManager();
+      startAnimation();
+    }, 100);
   });
 
   onDestroy(() => {
@@ -55,6 +75,10 @@
   });
 
   function initializeScene() {
+    console.log("Initializing 3D scene...");
+    console.log("Canvas element:", canvas);
+    console.log("Canvas dimensions:", canvas.clientWidth, "x", canvas.clientHeight);
+
     // Initialize Three.js scene
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x1a1a2e);
@@ -62,6 +86,7 @@
     // Camera setup
     camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
     camera.position.set(0, 10, 20);
+    console.log("Camera positioned at:", camera.position);
 
     // Renderer setup
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -69,6 +94,7 @@
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setClearColor(0x1a1a2e);
+    console.log("Renderer initialized");
 
     // Controls
     controls = new OrbitControls(camera, renderer.domElement);
@@ -78,8 +104,8 @@
     // Stats disabled for now to avoid build issues
     // TODO: Add stats panel back when needed
 
-    // Scene manager
-    sceneManager = new SceneManager();
+    // Scene manager - not needed for this demo
+    // sceneManager = new SceneManager();
 
     // Lighting
     const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
@@ -91,22 +117,41 @@
     directionalLight.shadow.mapSize.width = 2048;
     directionalLight.shadow.mapSize.height = 2048;
     scene.add(directionalLight);
+
+    // Add test cube to verify scene is working
+    const testGeometry = new THREE.BoxGeometry(2, 2, 2);
+    const testMaterial = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+    const testCube = new THREE.Mesh(testGeometry, testMaterial);
+    testCube.position.set(5, 5, 0);
+    scene.add(testCube);
+    console.log("Test cube added to scene");
+
+    console.log("Scene initialization complete. Total scene children:", scene.children.length);
   }
 
   function createRuntimeComponents() {
+    console.log("Creating runtime components...");
+
     // Create all runtime components
     callStack = new CallStack3D();
     scene.add(callStack);
+    console.log("CallStack3D created and added to scene");
 
     webAPI = new WebAPI3D();
     scene.add(webAPI);
+    console.log("WebAPI3D created and added to scene");
 
     microtaskQueue = new MicrotaskQueue3D();
     scene.add(microtaskQueue);
+    console.log("MicrotaskQueue3D created and added to scene");
 
     macrotaskQueue = new MacrotaskQueue3D(scene);
+    console.log("MacrotaskQueue3D created (adds itself to scene)");
 
     eventLoop = new EventLoop3D(scene);
+    console.log("EventLoop3D created (adds itself to scene)");
+
+    console.log("All runtime components created. Scene children:", scene.children.length);
   }
 
   function setupTokenManager() {
@@ -141,10 +186,7 @@
       // Update token manager
       tokenManager.update(deltaTime);
 
-      // Update scene manager (if it has update method)
-      if (sceneManager.update) {
-        sceneManager.update(deltaTime);
-      }
+      // Scene manager update not needed
 
       // Render
       renderer.render(scene, camera);
@@ -178,6 +220,15 @@
         case "mixed":
           await runMixedScenario();
           break;
+        case "physics":
+          await runPhysicsPlayground();
+          break;
+        case "collision":
+          await runCollisionDemo();
+          break;
+        case "magnetic":
+          await runMagneticDemo();
+          break;
       }
     } finally {
       isRunning = false;
@@ -187,11 +238,29 @@
   async function runSimpleScenario() {
     console.log("Running simple sync scenario...");
 
-    const token = await tokenManager.executeTokenFlow({
-      type: "sync",
-      content: 'console.log("Hello")',
-      priority: 1,
-    });
+    if (!tokenManager) {
+      console.error("TokenManager not initialized!");
+      return;
+    }
+
+    if (!scene) {
+      console.error("Scene not initialized!");
+      return;
+    }
+
+    console.log("Scene children count:", scene.children.length);
+    console.log("Token manager:", tokenManager);
+
+    try {
+      await tokenManager.executeTokenFlow({
+        type: "sync",
+        content: 'console.log("Hello")',
+        priority: 1,
+      });
+      console.log("Simple scenario completed");
+    } catch (error) {
+      console.error("Error in simple scenario:", error);
+    }
   }
 
   async function runPromiseScenario() {
@@ -273,6 +342,203 @@
     await Promise.all([sync, timer, promise]);
   }
 
+  async function runPhysicsPlayground() {
+    console.log("Running physics playground...");
+
+    // Enable physics
+    tokenManager.setPhysicsEnabled(true);
+
+    // Create multiple tokens with different physics properties
+    const tokens = [];
+
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const radius = 5;
+      const spawnPos = new THREE.Vector3(
+        Math.cos(angle) * radius,
+        8 + Math.random() * 4,
+        Math.sin(angle) * radius
+      );
+
+      const tokenType = ["sync", "promise", "timer", "fetch", "dom", "io"][i % 6];
+
+      const token = tokenManager.createToken(
+        {
+          type: tokenType as any,
+          content: `Token ${i + 1}`,
+          priority: Math.floor(Math.random() * 5) + 1,
+        },
+        spawnPos
+      );
+
+      tokens.push(token);
+
+      // Add some initial velocity for interesting physics
+      token.velocity.set((Math.random() - 0.5) * 5, Math.random() * 2, (Math.random() - 0.5) * 5);
+    }
+
+    // Create some spring constraints between random tokens
+    for (let i = 0; i < 3; i++) {
+      const tokenA = tokens[Math.floor(Math.random() * tokens.length)];
+      const tokenB = tokens[Math.floor(Math.random() * tokens.length)];
+
+      if (tokenA !== tokenB) {
+        tokenManager.createTokenConstraints(tokenA.data.id, tokenB.data.id, "spring");
+      }
+    }
+  }
+
+  async function runCollisionDemo() {
+    console.log("Running collision demo...");
+
+    // Enable physics with collision detection
+    tokenManager.setPhysicsEnabled(true);
+
+    // Create two groups of tokens that will collide
+    const group1Tokens = [];
+    const group2Tokens = [];
+
+    // Group 1: Heavy tokens from left
+    for (let i = 0; i < 4; i++) {
+      const token = tokenManager.createToken(
+        {
+          type: "io",
+          content: `Heavy ${i + 1}`,
+          priority: 1,
+        },
+        new THREE.Vector3(-8, 2 + i, 0)
+      );
+
+      // Set heavy physics properties
+      token.setPhysicsProperties({
+        mass: 2.0,
+        elasticity: 0.8,
+        collisionRadius: 0.8,
+      });
+
+      // Give them velocity towards the center
+      token.velocity.set(3, 0, 0);
+      group1Tokens.push(token);
+    }
+
+    // Group 2: Light tokens from right
+    for (let i = 0; i < 6; i++) {
+      const token = tokenManager.createToken(
+        {
+          type: "timer",
+          content: `Light ${i + 1}`,
+          priority: 1,
+        },
+        new THREE.Vector3(8, 1 + i * 0.5, Math.random() * 2 - 1)
+      );
+
+      // Set light physics properties
+      token.setPhysicsProperties({
+        mass: 0.3,
+        elasticity: 0.9,
+        collisionRadius: 0.3,
+      });
+
+      // Give them velocity towards the center
+      token.velocity.set(-2, 0, Math.random() - 0.5);
+      group2Tokens.push(token);
+    }
+  }
+
+  async function runMagneticDemo() {
+    console.log("Running magnetic field demo...");
+
+    // Enable physics
+    tokenManager.setPhysicsEnabled(true);
+
+    // Create magnetic field sources at runtime components
+    const components = [
+      { name: "callstack", pos: callStack.position, strength: magneticStrength },
+      { name: "webapi", pos: webAPI.position, strength: magneticStrength * 0.8 },
+      { name: "microtask", pos: microtaskQueue.position, strength: magneticStrength * 1.2 },
+      { name: "macrotask", pos: new THREE.Vector3(-5, -3, 0), strength: magneticStrength },
+    ];
+
+    components.forEach((comp) => {
+      tokenManager.updateMagneticField(comp.name, comp.pos, comp.strength);
+    });
+
+    // Create tokens at random positions
+    const tokens = [];
+    for (let i = 0; i < 10; i++) {
+      const spawnPos = new THREE.Vector3(
+        (Math.random() - 0.5) * 20,
+        Math.random() * 10 + 5,
+        (Math.random() - 0.5) * 20
+      );
+
+      const tokenType = ["sync", "promise", "timer", "fetch", "dom"][i % 5];
+
+      const token = tokenManager.createToken(
+        {
+          type: tokenType as any,
+          content: `Magnetic ${i + 1}`,
+          priority: Math.floor(Math.random() * 3) + 1,
+        },
+        spawnPos
+      );
+
+      // Different magnetic properties
+      token.setPhysicsProperties({
+        magnetism: 0.5 + Math.random() * 1.5,
+      });
+
+      tokens.push(token);
+    }
+
+    // Animate magnetic field strengths over time
+    let time = 0;
+    const magneticAnimation = setInterval(() => {
+      time += 0.1;
+
+      components.forEach((comp, index) => {
+        const dynamicStrength = comp.strength * (1 + Math.sin(time + index) * 0.3);
+        tokenManager.updateMagneticField(comp.name, comp.pos, dynamicStrength);
+      });
+    }, 100);
+
+    // Stop animation after 10 seconds
+    setTimeout(() => {
+      clearInterval(magneticAnimation);
+    }, 10000);
+  }
+
+  // Physics control functions
+  function togglePhysics() {
+    physicsEnabled = !physicsEnabled;
+    tokenManager.setPhysicsEnabled(physicsEnabled);
+  }
+
+  function updateMagneticStrength() {
+    const components = ["callstack", "webapi", "microtask", "macrotask"];
+    components.forEach((comp) => {
+      const pos = getComponentPosition(comp);
+      if (pos) {
+        tokenManager.updateMagneticField(comp, pos, magneticStrength);
+      }
+    });
+  }
+
+  function getComponentPosition(component: string): THREE.Vector3 | null {
+    switch (component) {
+      case "callstack":
+        return callStack?.position || null;
+      case "webapi":
+        return webAPI?.position || null;
+      case "microtask":
+        return microtaskQueue?.position || null;
+      case "macrotask":
+        return new THREE.Vector3(-5, -3, 0);
+      default:
+        return null;
+    }
+  }
+
   function clearTokens() {
     demoTokens.forEach((tokenId) => {
       tokenManager.destroyToken(tokenId);
@@ -350,6 +616,49 @@
         🧹 Clear Tokens
       </button>
     </div>
+
+    <!-- Physics Controls -->
+    {#if mode === "pro"}
+      <div class="physics-controls">
+        <h4>⚡ Physics Controls</h4>
+
+        <div class="physics-toggles">
+          <label class="toggle-label">
+            <input type="checkbox" bind:checked={physicsEnabled} on:change={togglePhysics} />
+            <span class="toggle-text">Physics Simulation</span>
+          </label>
+
+          <label class="toggle-label">
+            <input type="checkbox" bind:checked={showParticles} />
+            <span class="toggle-text">Particle Effects</span>
+          </label>
+
+          <label class="toggle-label">
+            <input type="checkbox" bind:checked={gravityEnabled} />
+            <span class="toggle-text">Gravity</span>
+          </label>
+
+          <label class="toggle-label">
+            <input type="checkbox" bind:checked={collisionEnabled} />
+            <span class="toggle-text">Collision Detection</span>
+          </label>
+        </div>
+
+        <div class="physics-sliders">
+          <label class="slider-label">
+            <span>Magnetic Strength: {magneticStrength}</span>
+            <input
+              type="range"
+              min="0"
+              max="50"
+              bind:value={magneticStrength}
+              on:input={updateMagneticStrength}
+              class="physics-slider"
+            />
+          </label>
+        </div>
+      </div>
+    {/if}
 
     <div class="mode-info">
       <span class="mode-badge {mode}">{mode.toUpperCase()} MODE</span>
@@ -539,6 +848,90 @@
   .mode-badge.pro {
     background: #8b5cf6;
     color: #ddd6fe;
+  }
+
+  /* Physics Controls */
+  .physics-controls {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(20, 31, 49, 0.9);
+    border-radius: 0.5rem;
+    border: 1px solid #374151;
+  }
+
+  .physics-controls h4 {
+    color: #60a5fa;
+    margin: 0 0 0.75rem 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .physics-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: #e2e8f0;
+    font-size: 0.85rem;
+    user-select: none;
+  }
+
+  .toggle-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #60a5fa;
+    cursor: pointer;
+  }
+
+  .toggle-text {
+    white-space: nowrap;
+  }
+
+  .physics-sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .slider-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    color: #e2e8f0;
+    font-size: 0.85rem;
+  }
+
+  .physics-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #374151;
+    outline: none;
+    cursor: pointer;
+    accent-color: #60a5fa;
+  }
+
+  .physics-slider::-webkit-slider-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #60a5fa;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .physics-slider::-webkit-slider-thumb:hover {
+    background: #3b82f6;
   }
 
   .canvas-container {
