@@ -1,9 +1,12 @@
 <script>
+  import MacrotaskDemo from "./lib/three/MacrotaskDemo.svelte";
+  import EventLoopDemo from "./lib/three/EventLoopDemo.svelte";
   import Stage from "./lib/Stage.svelte";
   import HighFidelityStage from "./lib/HighFidelityStage.svelte";
   import SimpleTest3D from "./lib/three/SimpleTest3D.svelte";
   import CallStackDemo from "./lib/three/CallStackDemo.svelte";
   import WebAPIDemo from "./lib/three/WebAPIDemo.svelte";
+  import MicrotaskDemo from "./lib/three/MicrotaskDemo.svelte";
   import Controls from "./lib/Controls.svelte";
   import Legend from "./lib/Legend.svelte";
   import { createRunner } from "./lib/sim/engine";
@@ -242,6 +245,12 @@
             } else if (mode === "callstack") {
               mode = "webapi";
             } else if (mode === "webapi") {
+              mode = "microtask";
+            } else if (mode === "microtask") {
+              mode = "macrotask";
+            } else if (mode === "macrotask") {
+              mode = "eventloop";
+            } else if (mode === "eventloop") {
               mode = "kid";
             } else {
               mode = "hifi";
@@ -295,6 +304,12 @@
       <CallStackDemo />
     {:else if mode === "webapi"}
       <WebAPIDemo />
+    {:else if mode === "microtask"}
+      <MicrotaskDemo />
+    {:else if mode === "macrotask"}
+      <MacrotaskDemo />
+    {:else if mode === "eventloop"}
+      <EventLoopDemo />
     {:else}
       <Stage bind:api={stageApi} {mode} />
     {/if}
