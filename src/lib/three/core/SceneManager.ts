@@ -30,11 +30,14 @@ export class SceneManager {
   private sceneObjects = new Map<string, THREE.Object3D>();
 
   constructor(options: SceneManagerOptions) {
+    console.log("🎬 SceneManager: Creating new instance with options:", options);
     this.canvas = options.canvas;
 
     // Initialize scene
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x0f0f23); // Dark blue background
+    console.log("✅ SceneManager: Scene created:", this.scene);
+    this.scene.background = new THREE.Color(0x222222); // Gray background for debugging
+    console.log("🎨 SceneManager: Scene background set to gray for debugging");
 
     // Initialize camera
     this.camera = new THREE.PerspectiveCamera(
@@ -44,6 +47,8 @@ export class SceneManager {
       1000 // Far clipping plane
     );
     this.camera.position.set(0, 5, 10);
+    this.camera.lookAt(0, 0, 0); // Look at the center of the scene
+    console.log("📷 SceneManager: Camera positioned at (0, 5, 10) looking at (0, 0, 0)");
 
     // Initialize renderer
     this.renderer = new THREE.WebGLRenderer({
@@ -53,6 +58,12 @@ export class SceneManager {
       powerPreference: "high-performance",
     });
     this.renderer.setSize(options.width, options.height);
+    console.log(
+      "✅ SceneManager: Renderer created and sized:",
+      this.renderer.domElement.width,
+      "x",
+      this.renderer.domElement.height
+    );
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -81,7 +92,9 @@ export class SceneManager {
     }
 
     // Start the render loop
+    console.log("🎬 SceneManager: Starting render loop...");
     this.renderLoop.start();
+    console.log("✅ SceneManager: Render loop started");
 
     // Add stats update to render loop if enabled
     if (this.stats) {
@@ -151,6 +164,7 @@ export class SceneManager {
    * Get the scene (for direct manipulation if needed)
    */
   getScene(): THREE.Scene {
+    console.log("🔍 SceneManager: getScene() called, returning:", this.scene);
     return this.scene;
   }
 

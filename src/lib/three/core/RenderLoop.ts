@@ -65,11 +65,16 @@ export class RenderLoop {
    * Start the render loop
    */
   start(): void {
-    if (this.isRunning) return;
+    if (this.isRunning) {
+      console.log("⚠️ RenderLoop: Already running, skipping start");
+      return;
+    }
 
+    console.log("🎬 RenderLoop: Starting render loop...");
     this.isRunning = true;
     this.lastFrameTime = performance.now();
     this.render();
+    console.log("✅ RenderLoop: First render() called");
   }
 
   /**
@@ -113,6 +118,11 @@ export class RenderLoop {
 
     // Render the scene
     const renderStartTime = performance.now();
+    // Debug: Log every 60th frame to avoid spam
+    if (Math.random() < 0.016) {
+      // ~1/60 chance
+      console.log("🖼️ RenderLoop: Rendering frame, scene objects:", this.scene.children.length);
+    }
     this.renderer.render(this.scene, this.camera);
     const renderEndTime = performance.now();
 

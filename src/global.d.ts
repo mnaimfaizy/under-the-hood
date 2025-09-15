@@ -49,3 +49,9 @@ declare module "three-orbitcontrols-ts" {
     dispose(): void;
   }
 }
+
+declare global {
+  interface Window {
+    __setMode?: (mode: string) => void;
+  }
+}
