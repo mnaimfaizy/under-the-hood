@@ -108,13 +108,20 @@
         break;
       case "webapi-add":
         webAPIs = [...webAPIs, e.token];
-        queueMicrotask(() => {
-          const el = document.querySelector(`[data-token="${e.token.id}"]`);
-          if (el)
-            track(
-              gsap.from(el, { scale: 0.55, opacity: 0, duration: 0.35, ease: "back.out(1.6)" })
-            );
-        });
+        if (!reducedMotion) {
+          queueMicrotask(() => {
+            const el = document.querySelector(`[data-token="${e.token.id}"]`);
+            if (el)
+              track(
+                gsap.from(el, {
+                  scale: 0.55,
+                  opacity: 0,
+                  duration: 0.35,
+                  ease: "back.out(1.6)",
+                })
+              );
+          });
+        }
         narrate(`${e.token.label} scheduled in Web API`);
         pushHistory(e.token, "webapi-add");
         break;

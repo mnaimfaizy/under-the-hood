@@ -1,5 +1,4 @@
 /// <reference types="svelte" />
-/// <reference types="vite/client" />
 /// <reference lib="dom" />
 /// <reference lib="webgl" />
 
@@ -48,5 +47,11 @@ declare module "three-orbitcontrols-ts" {
 
     update(): boolean;
     dispose(): void;
+  }
+}
+
+declare global {
+  interface Window {
+    __setMode?: (mode: string) => void;
   }
 }

@@ -1,6 +1,13 @@
 <script>
+  import MacrotaskDemo from "./lib/three/MacrotaskDemo.svelte";
+  import EventLoopDemo from "./lib/three/EventLoopDemo.svelte";
+  import TokenDemo from "./lib/three/TokenDemo.svelte";
   import Stage from "./lib/Stage.svelte";
   import HighFidelityStage from "./lib/HighFidelityStage.svelte";
+
+  import CallStackDemo from "./lib/three/CallStackDemo.svelte";
+  import WebAPIDemo from "./lib/three/WebAPIDemo.svelte";
+  import MicrotaskDemo from "./lib/three/MicrotaskDemo.svelte";
   import Controls from "./lib/Controls.svelte";
   import Legend from "./lib/Legend.svelte";
   import { createRunner } from "./lib/sim/engine";
@@ -14,6 +21,7 @@
     scenarioAsyncAwait,
     scenarioDomClick,
   } from "./lib/sim/scenarios";
+  import IntegratedDemo from "./lib/three/IntegratedDemo.svelte";
 
   // UI state
   let speed = 1; // 1x
@@ -32,6 +40,7 @@
 
   // Stage API to call instance methods
   let stageApi;
+  let integratedApi; // control API from IntegratedDemo
 
   // Runner instance
   const runner = createRunner({
@@ -48,6 +57,17 @@
   });
 
   function loadSelectedScenario() {
+    if (mode === "integrated") {
+      // Delegate scenario loading to Integrated demo runner
+      if (scenario === "two-logs") integratedApi?.loadScenario?.("two-logs");
+      else if (scenario === "timer-vs-promise") integratedApi?.loadScenario?.("timer-vs-promise");
+      else if (scenario === "fetch-robot") integratedApi?.loadScenario?.("fetch-robot");
+      else if (scenario === "microtask-chain") integratedApi?.loadScenario?.("microtask-chain");
+      else if (scenario === "nested-timeouts") integratedApi?.loadScenario?.("nested-timeouts");
+      else if (scenario === "async-await") integratedApi?.loadScenario?.("async-await");
+      else if (scenario === "dom-click") integratedApi?.loadScenario?.("dom-click");
+      return;
+    }
     if (mode === "hifi") {
       runner.load(scenarioHiFiBasic());
       return;
@@ -108,14 +128,20 @@
   function onPlay() {
     running = true;
     stageApi && stageApi.playTimeline();
-    if (mode === "hifi" && stageApi?.setTimeScale) {
-      stageApi.setTimeScale(speed);
+    if (mode === "integrated") integratedApi?.play?.();
+    if (mode === "hifi") {
+      // Ensure deterministic start for Hi-Fi mode
+      // Reset runner and reload scenario before playing to avoid any race
+      runner.reset();
+      loadSelectedScenario();
+      if (stageApi?.setTimeScale) stageApi.setTimeScale(speed);
     }
     runner.play();
   }
   function onPause() {
     running = false;
     stageApi && stageApi.pauseTimeline();
+    if (mode === "integrated") integratedApi?.pause?.();
     runner.pause();
   }
   function onRestart() {
@@ -123,12 +149,18 @@
     stageApi && stageApi.pauseTimeline();
     stageApi && stageApi.resetTimeline();
     stageApi && stageApi.resetTokens();
+    if (mode === "integrated") integratedApi?.reset?.();
     runner.reset();
     loadSelectedScenario();
   }
 
-  // Bind speed slider (0.25x–3x) to ms per step (base 800ms)
-  $: runner && runner.setSpeed(800 / speed);
+  // Bind speed slider (0.25x–3x) to ms per step
+  // Use a slightly faster base in Hi-Fi so full scenario finishes within test timeout
+  $: if (runner) {
+    const base = mode === "hifi" ? 250 : 800; // ms per step
+    runner.setSpeed(base / speed);
+    if (mode === "integrated") integratedApi?.setSpeed?.(base / speed);
+  }
   // Hi-Fi: adjust animation time scale separately
   $: if (mode === "hifi" && stageApi?.setTimeScale) {
     stageApi.setTimeScale(animationSpeed);
@@ -174,6 +206,18 @@
     } catch {
       // ignore persistence errors
     }
+  }
+  // Dev-only test hook: allow Playwright to switch modes reliably without UI clicks
+  if (typeof window !== "undefined" && import.meta.env.DEV) {
+    window.__setMode = (m) => {
+      mode = m;
+      logs = [];
+      // Reset any 3D stage/timeline if present
+      stageApi?.pauseTimeline?.();
+      stageApi?.resetTimeline?.();
+      stageApi?.resetTokens?.();
+      loadSelectedScenario();
+    };
   }
 
   // Optional sound cue (muted by default)
@@ -229,16 +273,72 @@
           />
           {mode === "pro" ? "Pro Mode" : "Kid Mode"}
         </label>
+        <!-- Dedicated Hi-Fi toggle for E2E tests and quick access -->
+        <button
+          class="btn-neutral text-xs px-3 py-2"
+          aria-label="Toggle High Fidelity View"
+          on:click={() => {
+            // Toggle between Hi-Fi and Basic (Kid) view
+            mode = mode === "hifi" ? "kid" : "hifi";
+            logs = [];
+            // Reset any timeline/tokens if API supports it
+            stageApi?.pauseTimeline?.();
+            stageApi?.resetTimeline?.();
+            stageApi?.resetTokens?.();
+            loadSelectedScenario();
+          }}
+        >
+          Hi-Fi
+        </button>
         <button
           class="btn-neutral text-xs px-3 py-2"
           on:click={() => {
-            mode = mode === "hifi" ? "kid" : "hifi";
+            if (mode === "hifi") {
+              mode = "3d";
+            } else if (mode === "3d") {
+              mode = "tokens";
+            } else if (mode === "tokens") {
+              mode = "callstack";
+            } else if (mode === "callstack") {
+              mode = "webapi";
+            } else if (mode === "webapi") {
+              mode = "microtask";
+            } else if (mode === "microtask") {
+              mode = "macrotask";
+            } else if (mode === "macrotask") {
+              mode = "eventloop";
+            } else if (mode === "eventloop") {
+              mode = "integrated";
+            } else if (mode === "integrated") {
+              mode = "kid";
+            } else {
+              mode = "hifi";
+            }
             logs = [];
             loadSelectedScenario();
           }}
-          aria-label="Toggle High Fidelity View"
+          aria-label="Toggle View Mode"
+          data-testid="toggle-view-mode"
         >
-          {mode === "hifi" ? "Basic View" : "Hi-Fi View"}
+          {mode === "hifi"
+            ? "Hi-Fi"
+            : mode === "3d"
+              ? "3D"
+              : mode === "tokens"
+                ? "Tokens"
+                : mode === "callstack"
+                  ? "CallStack"
+                  : mode === "webapi"
+                    ? "WebAPI"
+                    : mode === "microtask"
+                      ? "Microtask"
+                      : mode === "macrotask"
+                        ? "Macrotask"
+                        : mode === "eventloop"
+                          ? "EventLoop"
+                          : mode === "integrated"
+                            ? "Integrated"
+                            : "Basic"}
         </button>
         <button
           class="btn-neutral text-xs px-3 py-2"
@@ -268,6 +368,22 @@
           }
         }}
       />
+    {:else if mode === "3d"}
+      <!-- 3D test removed -->
+    {:else if mode === "tokens"}
+      <TokenDemo />
+    {:else if mode === "callstack"}
+      <CallStackDemo />
+    {:else if mode === "webapi"}
+      <WebAPIDemo />
+    {:else if mode === "microtask"}
+      <MicrotaskDemo />
+    {:else if mode === "macrotask"}
+      <MacrotaskDemo />
+    {:else if mode === "eventloop"}
+      <EventLoopDemo />
+    {:else if mode === "integrated"}
+      <IntegratedDemo bind:api={integratedApi} />
     {:else}
       <Stage bind:api={stageApi} {mode} />
     {/if}
@@ -326,7 +442,7 @@
         <button
           class="btn-neutral text-xs px-3 py-2"
           on:click={() => stageApi?.exportHistory?.()}
-          aria-label="Export token history">Export</button
+          aria-label="Export">Export</button
         >
       </div>
     {/if}
