@@ -32,8 +32,11 @@
   <!-- Scenario Info -->
   <div class="scenario-info">
     <div class="flex items-center gap-2">
-      <label class="text-xs font-semibold tracking-wide uppercase opacity-70">Scenario</label>
+      <label for="scenario-select" class="text-xs font-semibold tracking-wide uppercase opacity-70"
+        >Scenario</label
+      >
       <select
+        id="scenario-select"
         class="scenario-select px-3 py-2 rounded-md border min-h-11"
         bind:value={scenario}
         on:change={(e) => onScenarioChange && onScenarioChange(e.target.value)}
@@ -93,8 +96,11 @@
     </label>
 
     <div class="flex items-center gap-2 ml-auto">
-      <label class="text-xs font-semibold tracking-wide uppercase opacity-70">Speed</label>
+      <label for="speed-slider" class="text-xs font-semibold tracking-wide uppercase opacity-70"
+        >Speed</label
+      >
       <input
+        id="speed-slider"
         type="range"
         min="0.25"
         max="3"

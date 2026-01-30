@@ -15,7 +15,7 @@
 
 <div class="legend" aria-label="Token legend" role="group">
   {#each items as item}
-    <div class="legend-row" tabindex="0" aria-describedby={`legend-${item.kind}-desc`}>
+    <div class="legend-row" aria-describedby={`legend-${item.kind}-desc`}>
       <svg width="42" height="28" viewBox="0 0 84 44" aria-hidden="true">
         {#if item.kind === "sync"}
           <rect x="2" y="2" width="80" height="40" rx="14" class="shape sync" />
