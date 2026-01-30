@@ -18,9 +18,9 @@ test.describe("Hi-Fi Mode", () => {
 
     await page.goto("/");
 
-    // Switch to Hi-Fi view
-    const toggleHifi = page.getByRole("button", { name: "Toggle High Fidelity View" });
-    await toggleHifi.click();
+    // Switch to Hi-Fi view using the dropdown
+    const viewDropdown = page.locator('[data-testid="view-mode-select"]');
+    await viewDropdown.selectOption("hifi");
     await expect(page.locator(".hf-grid")).toBeVisible();
 
     // Ensure narration present
@@ -64,10 +64,11 @@ test.describe("Hi-Fi Mode", () => {
   // Additional test: toggling back to Basic view cleans up Hi-Fi DOM
   test("toggle back to basic view removes hf-grid", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Toggle High Fidelity View" }).click();
+    const viewDropdown = page.locator('[data-testid="view-mode-select"]');
+    await viewDropdown.selectOption("hifi");
     await expect(page.locator(".hf-grid")).toBeVisible();
-    // Toggle back
-    await page.getByRole("button", { name: "Toggle High Fidelity View" }).click();
+    // Toggle back to basic
+    await viewDropdown.selectOption("basic");
     await expect(page.locator(".hf-grid")).toHaveCount(0);
   });
 });

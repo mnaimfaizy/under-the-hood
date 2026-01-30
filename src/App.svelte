@@ -187,12 +187,14 @@
     if (typeof window === "undefined") return;
     try {
       const stored = window.localStorage.getItem(THEME_KEY);
-      if (stored) {
-        document.documentElement.classList.toggle("dark", stored === "dark");
-      } else {
-        const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        document.documentElement.classList.toggle("dark", prefers);
+      if (stored === "dark") {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+      } else if (stored === "light") {
+        document.documentElement.classList.add("light");
+        document.documentElement.classList.remove("dark");
       }
+      // If no stored preference, let CSS @media query handle it
     } catch {
       // localStorage not accessible; ignore preference load
     }
@@ -200,11 +202,33 @@
   if (typeof window !== "undefined") loadTheme();
   function toggleTheme() {
     if (typeof window === "undefined") return;
-    const isDark = document.documentElement.classList.toggle("dark");
-    try {
-      window.localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
-    } catch {
-      // ignore persistence errors
+    const wasDark = document.documentElement.classList.contains("dark");
+    const wasLight = document.documentElement.classList.contains("light");
+
+    // Determine current effective theme
+    let currentlyDark = wasDark;
+    if (!wasDark && !wasLight) {
+      // No explicit class, check OS preference
+      currentlyDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
+    // Toggle to opposite
+    if (currentlyDark) {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+      try {
+        window.localStorage.setItem(THEME_KEY, "light");
+      } catch {
+        // Ignore localStorage errors (e.g., privacy mode)
+      }
+    } else {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+      try {
+        window.localStorage.setItem(THEME_KEY, "dark");
+      } catch {
+        // Ignore localStorage errors (e.g., privacy mode)
+      }
     }
   }
   // Dev-only test hook: allow Playwright to switch modes reliably without UI clicks
@@ -256,98 +280,109 @@
         Pro Mode.
       </p>
     </div>
-    <div class="flex items-center gap-6 ml-auto">
-      <div class="flex items-center gap-4">
-        <label class="inline-flex items-center gap-2 text-sm font-medium select-none">
-          <input
-            type="checkbox"
-            role="switch"
-            aria-checked={mode === "pro"}
-            aria-label="Toggle Pro Mode"
-            class="h-4 w-4 accent-blue-600"
-            on:change={(e) => {
-              mode = e.currentTarget.checked ? "pro" : "kid";
-              logs = [];
-              loadSelectedScenario();
-            }}
-          />
-          {mode === "pro" ? "Pro Mode" : "Kid Mode"}
-        </label>
-        <!-- Dedicated Hi-Fi toggle for E2E tests and quick access -->
+    <div class="flex items-center gap-3 ml-auto flex-wrap">
+      <!-- Audience Mode: Kid vs Pro -->
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800">
         <button
-          class="btn-neutral text-xs px-3 py-2"
-          aria-label="Toggle High Fidelity View"
+          class="text-xs font-medium px-2 py-1 rounded transition-colors {mode !== 'pro' &&
+          mode !== 'hifi'
+            ? 'bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400'
+            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}"
           on:click={() => {
-            // Toggle between Hi-Fi and Basic (Kid) view
-            mode = mode === "hifi" ? "kid" : "hifi";
+            mode = "kid";
             logs = [];
-            // Reset any timeline/tokens if API supports it
+            loadSelectedScenario();
+          }}
+          aria-pressed={mode !== "pro" && mode !== "hifi"}
+        >
+          🎮 Kid
+        </button>
+        <button
+          class="text-xs font-medium px-2 py-1 rounded transition-colors {mode === 'pro' ||
+          mode === 'hifi'
+            ? 'bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400'
+            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}"
+          on:click={() => {
+            mode = "pro";
+            logs = [];
+            loadSelectedScenario();
+          }}
+          aria-pressed={mode === "pro" || mode === "hifi"}
+        >
+          🔧 Pro
+        </button>
+      </div>
+
+      <!-- View Mode Selector -->
+      <div class="flex items-center gap-1.5">
+        <span class="text-xs text-gray-500 dark:text-gray-400">View:</span>
+        <select
+          class="text-xs px-2 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          value={mode === "kid" || mode === "pro" ? "basic" : mode}
+          on:change={(e) => {
+            const val = e.currentTarget.value;
+            if (val === "basic") {
+              mode = mode === "pro" ? "pro" : "kid";
+            } else {
+              mode = val;
+            }
+            logs = [];
             stageApi?.pauseTimeline?.();
             stageApi?.resetTimeline?.();
             stageApi?.resetTokens?.();
             loadSelectedScenario();
           }}
+          aria-label="Select visualization mode"
+          data-testid="view-mode-select"
         >
-          Hi-Fi
-        </button>
-        <button
-          class="btn-neutral text-xs px-3 py-2"
-          on:click={() => {
-            if (mode === "hifi") {
-              mode = "3d";
-            } else if (mode === "3d") {
-              mode = "tokens";
-            } else if (mode === "tokens") {
-              mode = "callstack";
-            } else if (mode === "callstack") {
-              mode = "webapi";
-            } else if (mode === "webapi") {
-              mode = "microtask";
-            } else if (mode === "microtask") {
-              mode = "macrotask";
-            } else if (mode === "macrotask") {
-              mode = "eventloop";
-            } else if (mode === "eventloop") {
-              mode = "integrated";
-            } else if (mode === "integrated") {
-              mode = "kid";
-            } else {
-              mode = "hifi";
-            }
-            logs = [];
-            loadSelectedScenario();
-          }}
-          aria-label="Toggle View Mode"
-          data-testid="toggle-view-mode"
-        >
-          {mode === "hifi"
-            ? "Hi-Fi"
-            : mode === "3d"
-              ? "3D"
-              : mode === "tokens"
-                ? "Tokens"
-                : mode === "callstack"
-                  ? "CallStack"
-                  : mode === "webapi"
-                    ? "WebAPI"
-                    : mode === "microtask"
-                      ? "Microtask"
-                      : mode === "macrotask"
-                        ? "Macrotask"
-                        : mode === "eventloop"
-                          ? "EventLoop"
-                          : mode === "integrated"
-                            ? "Integrated"
-                            : "Basic"}
-        </button>
-        <button
-          class="btn-neutral text-xs px-3 py-2"
-          aria-label="Toggle dark mode"
-          on:click={toggleTheme}
-        >
-          Theme
-        </button>
+          <option value="basic">Basic (2D)</option>
+          <option value="hifi">Hi-Fi</option>
+          <option value="integrated">3D Integrated</option>
+          <optgroup label="3D Components">
+            <option value="callstack">Call Stack</option>
+            <option value="webapi">Web API</option>
+            <option value="microtask">Microtask</option>
+            <option value="macrotask">Macrotask</option>
+            <option value="eventloop">Event Loop</option>
+            <option value="tokens">Tokens</option>
+          </optgroup>
+        </select>
       </div>
+
+      <!-- Theme Toggle -->
+      <button
+        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        aria-label="Toggle dark mode"
+        on:click={toggleTheme}
+        title="Toggle theme"
+      >
+        <svg
+          class="w-5 h-5 text-gray-600 dark:text-gray-400 dark:hidden"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+          />
+        </svg>
+        <svg
+          class="w-5 h-5 text-yellow-400 hidden dark:block"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+      </button>
     </div>
   </header>
 

@@ -15,7 +15,7 @@
   } from "../sim/scenarios";
 
   // Component state
-  let sceneApi: any = {};
+  let _sceneApi: any = {};
   export let api: any = undefined; // expose control surface to parent
   let simulationBridge: SimulationBridge;
   let runner: any;
@@ -143,7 +143,7 @@
     }
   }
 
-  function addTestCube() {
+  function _addTestCube() {
     if (!sceneManager) return;
 
     try {

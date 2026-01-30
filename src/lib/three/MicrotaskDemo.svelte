@@ -11,7 +11,7 @@
   let queueLength = 0;
   let processingRate = 1.0;
   let isProcessing = false;
-  let totalProcessed = 0;
+  let _totalProcessed = 0;
   let recentTasks = [];
 
   // Task type counters
@@ -115,7 +115,7 @@
   // Demo functions for different microtask types
   function addPromise() {
     if (microtaskQueue) {
-      const id = microtaskQueue.addMicrotask("promise");
+      microtaskQueue.addMicrotask("promise");
       taskCounts.promise++;
       addToRecentTasks("Promise", "promise");
       taskCounts = { ...taskCounts }; // Trigger reactivity
@@ -124,7 +124,7 @@
 
   function addMutationObserver() {
     if (microtaskQueue) {
-      const id = microtaskQueue.addMicrotask("mutation");
+      microtaskQueue.addMicrotask("mutation");
       taskCounts.mutation++;
       addToRecentTasks("MutationObserver", "mutation");
       taskCounts = { ...taskCounts }; // Trigger reactivity
@@ -133,7 +133,7 @@
 
   function addQueueMicrotask() {
     if (microtaskQueue) {
-      const id = microtaskQueue.addMicrotask("queueMicrotask");
+      microtaskQueue.addMicrotask("queueMicrotask");
       taskCounts.queueMicrotask++;
       addToRecentTasks("queueMicrotask()", "queueMicrotask");
       taskCounts = { ...taskCounts }; // Trigger reactivity
@@ -142,7 +142,7 @@
 
   function addAsyncFunction() {
     if (microtaskQueue) {
-      const id = microtaskQueue.addMicrotask("async");
+      microtaskQueue.addMicrotask("async");
       taskCounts.async++;
       addToRecentTasks("Async Function", "async");
       taskCounts = { ...taskCounts }; // Trigger reactivity
@@ -175,7 +175,7 @@
       queueMicrotask: 0,
       async: 0,
     };
-    totalProcessed = 0;
+    _totalProcessed = 0;
     recentTasks = [];
     clearQueue();
   }

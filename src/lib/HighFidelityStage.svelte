@@ -20,7 +20,7 @@
       const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
       reducedMotion = mq.matches;
       mq.addEventListener("change", (e) => (reducedMotion = e.matches));
-    } catch (err) {
+    } catch {
       // ignore matchMedia errors (e.g., unsupported environment)
     }
   }
@@ -31,7 +31,7 @@
       // Immediately jump to end state if motion reduced
       try {
         tween.progress(1);
-      } catch (err) {
+      } catch {
         // ignore tween errors when forcing progress
       }
       return tween;
@@ -357,7 +357,11 @@ console.log('End!')</code
   </div>
   <div class="panel stack" aria-label="Call Stack">
     <h3>CALL STACK</h3>
-    <div class="stack-frames" data-empty={callStack.length === 0}>
+    <div
+      class="stack-frames"
+      data-empty={callStack.length === 0}
+      data-empty-text="Functions will appear here"
+    >
       {#each [...callStack].slice().reverse() as frame (frame)}
         <div class="frame">{frame}</div>
       {/each}
@@ -365,7 +369,11 @@ console.log('End!')</code
   </div>
   <div class="panel webapi" aria-label="Web API">
     <h3>WEB API</h3>
-    <div class="api-area" data-empty={webAPIs.length === 0}>
+    <div
+      class="api-area"
+      data-empty={webAPIs.length === 0}
+      data-empty-text="Timers & fetch wait here"
+    >
       {#each webAPIs as t (t.id)}
         <div
           class="api-token"
@@ -381,7 +389,11 @@ console.log('End!')</code
   </div>
   <div class="panel micro" aria-label="Microtask Queue">
     <h3>MICROTASK QUEUE</h3>
-    <div class="queue" data-empty={microQueue.length === 0}>
+    <div
+      class="queue"
+      data-empty={microQueue.length === 0}
+      data-empty-text="Promise callbacks queue here"
+    >
       {#each microQueue as t (t.id)}<div
           class="q-item micro"
           data-token={t.id}
@@ -395,7 +407,11 @@ console.log('End!')</code
   </div>
   <div class="panel macro" aria-label="Macrotask Queue">
     <h3>MACROTASK QUEUE</h3>
-    <div class="queue" data-empty={macroQueue.length === 0}>
+    <div
+      class="queue"
+      data-empty={macroQueue.length === 0}
+      data-empty-text="Timer callbacks queue here"
+    >
       {#each macroQueue as t (t.id)}<div
           class="q-item macro"
           data-token={t.id}
@@ -595,11 +611,22 @@ console.log('End!')</code
     color: #eab308;
     box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.25);
   }
+  [data-empty="true"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   [data-empty="true"]::after {
-    content: "(empty)";
-    font-size: 0.6rem;
-    opacity: 0.4;
+    content: attr(data-empty-text);
+    font-size: 0.65rem;
+    opacity: 0.35;
     font-style: italic;
+    text-align: center;
+    padding: 0.5rem;
+  }
+  /* Fallback for elements without custom text */
+  [data-empty="true"]:not([data-empty-text])::after {
+    content: "(empty)";
   }
   @media (max-width: 1100px) {
     .hf-grid {

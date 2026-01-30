@@ -14,7 +14,7 @@
   export let mode: "kid" | "pro" = "kid";
 
   let canvas: HTMLCanvasElement;
-  let sceneManager: SceneManager;
+  let _sceneManager: SceneManager;
   let tokenManager: TokenManager3D;
   let renderer: THREE.WebGLRenderer;
   let scene: THREE.Scene;
@@ -274,7 +274,7 @@
 
     // Add a second promise after a delay
     setTimeout(async () => {
-      const token2 = tokenManager.executeTokenFlow({
+      const _token2 = tokenManager.executeTokenFlow({
         type: "promise",
         content: 'fetch("/api")',
         priority: 2,

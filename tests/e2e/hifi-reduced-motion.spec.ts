@@ -25,8 +25,9 @@ test.describe("Hi-Fi Mode (reduced motion)", () => {
 
     await page.goto("/");
 
-    // Switch to Hi-Fi
-    await page.getByRole("button", { name: "Toggle High Fidelity View" }).click();
+    // Switch to Hi-Fi using dropdown
+    const viewDropdown = page.locator('[data-testid="view-mode-select"]');
+    await viewDropdown.selectOption("hifi");
     await expect(page.locator(".hf-grid")).toBeVisible();
 
     // Play

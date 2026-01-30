@@ -51,6 +51,16 @@
     border-radius: var(--radius-md);
     background: rgb(var(--surface));
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .legend-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: rgb(var(--accent));
+  }
+  .legend-row:hover svg {
+    transform: scale(1.1);
   }
   .legend-row:focus-visible {
     outline: 2px solid rgb(var(--accent));
@@ -61,6 +71,10 @@
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    transition: color 0.2s ease;
+  }
+  .legend-row:hover .label {
+    color: rgb(var(--accent));
   }
   .desc {
     display: block;
@@ -70,27 +84,51 @@
   svg {
     width: 36px;
     height: 24px;
+    transition: transform 0.2s ease;
   }
   .shape {
     stroke-width: 2;
+    transition: all 0.2s ease;
+  }
+  .legend-row:hover .shape {
+    stroke-width: 3;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   }
   .shape.sync {
     fill: #ffffff;
     stroke: #111827;
   }
+  .legend-row:hover .shape.sync {
+    fill: #f3f4f6;
+  }
   .shape.micro {
     fill: #e0f2fe;
     stroke: #1e3a8a;
+  }
+  .legend-row:hover .shape.micro {
+    fill: #bae6fd;
+    stroke: #1d4ed8;
   }
   .shape.macro {
     fill: #fee2e2;
     stroke: #7f1d1d;
   }
+  .legend-row:hover .shape.macro {
+    fill: #fecaca;
+    stroke: #b91c1c;
+  }
   .shape.webapi {
     fill: #ecfccb;
     stroke: #065f46;
   }
+  .legend-row:hover .shape.webapi {
+    fill: #d9f99d;
+    stroke: #047857;
+  }
   :global(html.dark) .legend-row {
     background: rgb(var(--surface-alt));
+  }
+  :global(html.dark) .legend-row:hover {
+    background: rgb(var(--surface));
   }
 </style>

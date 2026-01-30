@@ -16,8 +16,21 @@
   --transition-fast: 120ms;
 }
 
+/* Dark mode via .dark class (manual toggle) */
+html.dark {
+  --bg: 17 24 39;
+  --fg: 243 244 246;
+  --muted: 156 163 175;
+  --surface: 31 41 55;
+  --surface-alt: 55 65 81;
+  --border: 75 85 99;
+  --accent: 96 165 250;
+  --accent-rgb: 96 165 250;
+}
+
+/* Fallback: respect OS preference if no manual toggle */
 @media (prefers-color-scheme: dark) {
-  :root {
+  html:not(.light) {
     --bg: 17 24 39;
     --fg: 243 244 246;
     --muted: 156 163 175;
