@@ -133,32 +133,69 @@
   {width}
   {height}
   viewBox={`0 0 ${width} ${height}`}
-  class="w-full h-auto"
+  class="w-full h-auto stage-svg"
   role="img"
   aria-label={mode === "pro"
     ? "JavaScript runtime and engine stage"
     : "JavaScript runtime playground stage"}
 >
-  <!-- Grid background -->
+  <!-- Enhanced grid background with gradient -->
   <defs>
-    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="1" />
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(100,116,139,0.06)" stroke-width="1" />
     </pattern>
+    <pattern id="gridLarge" width="96" height="96" patternUnits="userSpaceOnUse">
+      <path d="M 96 0 L 0 0 0 96" fill="none" stroke="rgba(100,116,139,0.1)" stroke-width="1" />
+    </pattern>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#f1f5f9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bgGradientDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
     <filter id="tokenShadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#000" flood-opacity="0.28" />
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.12" />
+    </filter>
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000" flood-opacity="0.1" />
+    </filter>
+    <filter id="glowPurple" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feFlood flood-color="#8b5cf6" flood-opacity="0.3" />
+      <feComposite in2="blur" operator="in" />
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
   </defs>
-  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Background layers -->
+  <rect width="100%" height="100%" class="stage-bg" rx="20" />
+  <rect width="100%" height="100%" fill="url(#grid)" class="stage-grid" rx="20" />
+  <rect width="100%" height="100%" fill="url(#gridLarge)" class="stage-grid-lg" rx="20" />
 
   <!-- Placeholder blocks -->
   {#if mode === "kid"}
     <!-- Kid Mode: Fun characters and shapes that fill the areas -->
-    <g role="group" aria-label="Task Robot - where tasks run one by one">
+    <g role="group" aria-label="Task Robot - where tasks run one by one" filter="url(#cardShadow)">
       <!-- Robot factory background -->
       <defs>
         <linearGradient id="robotBg" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#fef3c7;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#fde68a;stop-opacity:1" />
+          <stop offset="0%" style="stop-color:#fef9c3;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#fde047;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="robotBgStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#facc15;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#eab308;stop-opacity:1" />
         </linearGradient>
       </defs>
       <rect
@@ -166,102 +203,123 @@
         y="40"
         width="280"
         height="180"
-        rx="16"
+        rx="20"
         fill="url(#robotBg)"
-        stroke="#f59e0b"
+        stroke="url(#robotBgStroke)"
         stroke-width="3"
       >
         <title>Task Robot: runs tasks in order</title>
       </rect>
+      <!-- Subtle inner highlight -->
+      <rect
+        x="24"
+        y="44"
+        width="272"
+        height="172"
+        rx="18"
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
+        stroke-width="1"
+      />
       <!-- Decorative gears -->
       <circle
-        cx="260"
-        cy="70"
-        r="8"
+        cx="265"
+        cy="65"
+        r="10"
         fill="none"
-        stroke="#d97706"
-        stroke-width="1.5"
-        opacity="0.3"
+        stroke="#ca8a04"
+        stroke-width="2"
+        opacity="0.25"
       />
-      <circle
-        cx="275"
-        cy="85"
-        r="6"
-        fill="none"
-        stroke="#d97706"
-        stroke-width="1.5"
-        opacity="0.3"
-      />
+      <circle cx="282" cy="82" r="7" fill="none" stroke="#ca8a04" stroke-width="2" opacity="0.25" />
       <!-- Robot: head with shine -->
-      <circle cx="160" cy="115" r="24" fill="#fbbf24" stroke="#d97706" stroke-width="2.5" />
-      <ellipse cx="155" cy="110" rx="8" ry="10" fill="#fde68a" opacity="0.6" />
+      <circle cx="160" cy="115" r="28" fill="#fbbf24" stroke="#ca8a04" stroke-width="3" />
+      <ellipse cx="152" cy="108" rx="10" ry="12" fill="#fef3c7" opacity="0.7" />
       <!-- Robot body -->
       <rect
-        x="133"
-        y="130"
-        width="34"
-        height="44"
-        rx="8"
+        x="130"
+        y="134"
+        width="40"
+        height="50"
+        rx="10"
         fill="#f59e0b"
-        stroke="#d97706"
-        stroke-width="2.5"
+        stroke="#ca8a04"
+        stroke-width="3"
       />
+      <!-- Body shine -->
+      <rect x="134" y="138" width="12" height="20" rx="4" fill="rgba(255,255,255,0.3)" />
       <!-- Robot arms -->
       <rect
-        x="121"
-        y="140"
-        width="12"
-        height="28"
-        rx="4"
+        x="116"
+        y="144"
+        width="14"
+        height="32"
+        rx="5"
         fill="#fbbf24"
-        stroke="#d97706"
+        stroke="#ca8a04"
         stroke-width="2"
       />
       <rect
-        x="167"
-        y="140"
-        width="12"
-        height="28"
-        rx="4"
+        x="170"
+        y="144"
+        width="14"
+        height="32"
+        rx="5"
         fill="#fbbf24"
-        stroke="#d97706"
+        stroke="#ca8a04"
         stroke-width="2"
       />
-      <!-- Eyes -->
-      <circle cx="143" cy="102" r="4" fill="#1f2937" />
-      <circle cx="157" cy="102" r="4" fill="#1f2937" />
-      <circle cx="144" cy="101" r="1.5" fill="#60a5fa" />
-      <circle cx="158" cy="101" r="1.5" fill="#60a5fa" />
-      <!-- Antenna -->
-      <line x1="150" y1="81" x2="150" y2="72" stroke="#d97706" stroke-width="2" />
-      <circle cx="150" cy="70" r="3" fill="#ef4444" />
-      <!-- Mouth -->
+      <!-- Eyes with glow -->
+      <circle cx="148" cy="108" r="6" fill="#1f2937" />
+      <circle cx="172" cy="108" r="6" fill="#1f2937" />
+      <circle cx="150" cy="106" r="2" fill="#60a5fa" />
+      <circle cx="174" cy="106" r="2" fill="#60a5fa" />
+      <!-- Antenna with pulse -->
+      <line
+        x1="160"
+        y1="82"
+        x2="160"
+        y2="70"
+        stroke="#ca8a04"
+        stroke-width="3"
+        stroke-linecap="round"
+      />
+      <circle cx="160" cy="66" r="5" fill="#ef4444" />
+      <circle cx="160" cy="66" r="3" fill="#fca5a5" />
+      <!-- Happy mouth -->
       <path
-        d="M 145 112 Q 150 115 155 112"
+        d="M 148 120 Q 160 128 172 120"
         stroke="#1f2937"
-        stroke-width="2"
+        stroke-width="3"
         fill="none"
         stroke-linecap="round"
       />
-      <!-- Conveyor belt with depth -->
-      <rect x="50" y="178" width="180" height="10" fill="#6b7280" rx="2" />
-      <rect x="50" y="175" width="180" height="8" fill="#9ca3af" rx="2" />
-      <rect x="50" y="175" width="20" height="8" fill="#4b5563" rx="1" />
-      <rect x="80" y="175" width="20" height="8" fill="#4b5563" rx="1" />
-      <rect x="110" y="175" width="20" height="8" fill="#4b5563" rx="1" />
-      <rect x="140" y="175" width="20" height="8" fill="#4b5563" rx="1" />
-      <rect x="170" y="175" width="20" height="8" fill="#4b5563" rx="1" />
-      <text x="150" y="200" text-anchor="middle" class="fill-black" font-size="15" font-weight="600"
+      <!-- Conveyor belt with 3D effect -->
+      <rect x="45" y="182" width="190" height="12" fill="#4b5563" rx="3" />
+      <rect x="45" y="178" width="190" height="10" fill="#6b7280" rx="3" />
+      <!-- Belt segments -->
+      {#each [0, 30, 60, 90, 120, 150] as offset}
+        <rect x={50 + offset} y="178" width="22" height="10" fill="#374151" rx="2" />
+      {/each}
+      <text x="160" y="208" text-anchor="middle" class="fill-black" font-size="14" font-weight="700"
         >Task Robot</text
       >
     </g>
 
-    <g role="group" aria-label="Magic Cloud - handles special tasks like timers">
+    <g
+      role="group"
+      aria-label="Magic Cloud - handles special tasks like timers"
+      filter="url(#cardShadow)"
+    >
       <!-- Cloud background with gradient -->
       <defs>
         <linearGradient id="cloudBg" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#dbeafe;stop-opacity:1" />
+          <stop offset="0%" style="stop-color:#eff6ff;stop-opacity:1" />
           <stop offset="100%" style="stop-color:#bfdbfe;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="cloudBgStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
         </linearGradient>
       </defs>
       <rect
@@ -269,371 +327,572 @@
         y="40"
         width="280"
         height="180"
-        rx="16"
+        rx="20"
         fill="url(#cloudBg)"
-        stroke="#3b82f6"
+        stroke="url(#cloudBgStroke)"
         stroke-width="3"
       >
         <title>Magic Cloud: handles timers and web tasks</title>
       </rect>
-      <!-- Decorative clouds -->
-      <ellipse cx="670" cy="70" rx="18" ry="12" fill="#93c5fd" opacity="0.4" />
-      <ellipse cx="685" cy="68" rx="15" ry="10" fill="#93c5fd" opacity="0.4" />
-      <ellipse cx="880" cy="75" rx="15" ry="10" fill="#93c5fd" opacity="0.4" />
-      <!-- Main cloud shape with better design -->
-      <ellipse cx="780" cy="130" rx="45" ry="30" fill="#ffffff" opacity="0.6" />
-      <ellipse cx="760" cy="125" rx="30" ry="22" fill="#ffffff" opacity="0.5" />
-      <ellipse cx="800" cy="125" rx="30" ry="22" fill="#ffffff" opacity="0.5" />
-      <!-- Server/Computer icon -->
+      <!-- Inner highlight -->
       <rect
-        x="763"
-        y="115"
-        width="34"
-        height="24"
-        rx="3"
+        x="644"
+        y="44"
+        width="272"
+        height="172"
+        rx="18"
+        fill="none"
+        stroke="rgba(255,255,255,0.6)"
+        stroke-width="1"
+      />
+      <!-- Decorative floating clouds -->
+      <ellipse cx="670" cy="70" rx="20" ry="14" fill="#93c5fd" opacity="0.5" />
+      <ellipse cx="688" cy="66" rx="16" ry="11" fill="#93c5fd" opacity="0.4" />
+      <ellipse cx="890" cy="72" rx="18" ry="12" fill="#93c5fd" opacity="0.4" />
+      <!-- Main cloud cluster -->
+      <ellipse cx="780" cy="125" rx="50" ry="34" fill="#ffffff" opacity="0.7" />
+      <ellipse cx="755" cy="118" rx="35" ry="26" fill="#ffffff" opacity="0.6" />
+      <ellipse cx="810" cy="120" rx="35" ry="26" fill="#ffffff" opacity="0.6" />
+      <ellipse cx="780" cy="105" rx="28" ry="20" fill="#ffffff" opacity="0.5" />
+      <!-- Server/Database icon -->
+      <rect
+        x="762"
+        y="108"
+        width="38"
+        height="30"
+        rx="4"
         fill="#1e40af"
         stroke="#1e3a8a"
-        stroke-width="1.5"
+        stroke-width="2"
       />
-      <rect x="766" y="119" width="28" height="4" rx="1" fill="#60a5fa" />
-      <rect x="766" y="125" width="28" height="4" rx="1" fill="#93c5fd" />
-      <rect x="766" y="131" width="28" height="4" rx="1" fill="#60a5fa" />
+      <!-- Server stripes -->
+      <rect x="766" y="113" width="30" height="5" rx="1.5" fill="#60a5fa" />
+      <rect x="766" y="121" width="30" height="5" rx="1.5" fill="#93c5fd" />
+      <rect x="766" y="129" width="30" height="5" rx="1.5" fill="#60a5fa" />
       <!-- LED lights -->
-      <circle cx="770" cy="120" r="1.5" fill="#10b981" />
-      <circle cx="775" cy="120" r="1.5" fill="#10b981" />
-      <!-- Lightning bolts with glow -->
-      <path
-        d="M 710 100 L 714 106 L 711 106 L 715 112"
-        stroke="#fbbf24"
-        stroke-width="2.5"
-        fill="none"
-        stroke-linecap="round"
-        opacity="0.8"
-      />
-      <path
-        d="M 850 100 L 854 106 L 851 106 L 855 112"
-        stroke="#fbbf24"
-        stroke-width="2.5"
-        fill="none"
-        stroke-linecap="round"
-        opacity="0.8"
-      />
-      <text x="780" y="215" text-anchor="middle" class="fill-black" font-size="15" font-weight="600"
+      <circle cx="770" cy="115" r="2" fill="#22c55e" />
+      <circle cx="776" cy="115" r="2" fill="#22c55e" />
+      <circle cx="782" cy="115" r="2" fill="#fbbf24" />
+      <!-- Lightning bolts -->
+      <g opacity="0.9">
+        <path
+          d="M 700 95 L 706 104 L 702 104 L 708 115"
+          stroke="#facc15"
+          stroke-width="3"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M 860 95 L 866 104 L 862 104 L 868 115"
+          stroke="#facc15"
+          stroke-width="3"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </g>
+      <text x="780" y="215" text-anchor="middle" class="fill-black" font-size="14" font-weight="700"
         >Magic Cloud</text
       >
     </g>
 
-    <g role="group" aria-label="Speedy Lane - quick tasks like promises">
+    <g role="group" aria-label="Speedy Lane - quick tasks like promises" filter="url(#cardShadow)">
       <!-- Fast lane background with gradient -->
       <defs>
         <linearGradient id="speedyBg" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#fef3c7;stop-opacity:1" />
+          <stop offset="0%" style="stop-color:#fef9c3;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#fde047;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="speedyStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#facc15;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#eab308;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect
+        x="40"
+        y="280"
+        width="280"
+        height="160"
+        rx="20"
+        fill="url(#speedyBg)"
+        stroke="url(#speedyStroke)"
+        stroke-width="3"
+      >
+        <title>Speedy Lane: quick promise tasks</title>
+      </rect>
+      <!-- Inner highlight -->
+      <rect
+        x="44"
+        y="284"
+        width="272"
+        height="152"
+        rx="18"
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
+        stroke-width="1"
+      />
+      <!-- Road with 3D depth effect -->
+      <rect x="50" y="348" width="260" height="36" fill="#6b7280" rx="6" />
+      <rect x="50" y="345" width="260" height="32" fill="#9ca3af" rx="6" />
+      <rect x="50" y="345" width="260" height="28" fill="#d1d5db" rx="5" />
+      <!-- Dashed center line -->
+      {#each [0, 52, 104, 156, 208] as offset}
+        <rect x={55 + offset} y="357" width="42" height="5" fill="#facc15" rx="2" />
+      {/each}
+      <!-- Start/Finish flags -->
+      <g transform="translate(58, 298)">
+        <rect width="32" height="22" rx="3" fill="#1f2937" stroke="#374151" stroke-width="1.5" />
+        <!-- Checkered pattern -->
+        <rect x="2" y="2" width="6" height="6" fill="#ffffff" />
+        <rect x="8" y="8" width="6" height="6" fill="#ffffff" />
+        <rect x="14" y="2" width="6" height="6" fill="#ffffff" />
+        <rect x="20" y="8" width="6" height="6" fill="#ffffff" />
+        <rect x="26" y="2" width="4" height="6" fill="#ffffff" />
+        <rect x="2" y="14" width="6" height="6" fill="#ffffff" />
+        <rect x="14" y="14" width="6" height="6" fill="#ffffff" />
+        <rect x="26" y="14" width="4" height="6" fill="#ffffff" />
+      </g>
+      <g transform="translate(270, 298)">
+        <rect width="32" height="22" rx="3" fill="#1f2937" stroke="#374151" stroke-width="1.5" />
+        <rect x="2" y="2" width="6" height="6" fill="#ffffff" />
+        <rect x="8" y="8" width="6" height="6" fill="#ffffff" />
+        <rect x="14" y="2" width="6" height="6" fill="#ffffff" />
+        <rect x="20" y="8" width="6" height="6" fill="#ffffff" />
+        <rect x="26" y="2" width="4" height="6" fill="#ffffff" />
+        <rect x="2" y="14" width="6" height="6" fill="#ffffff" />
+        <rect x="14" y="14" width="6" height="6" fill="#ffffff" />
+        <rect x="26" y="14" width="4" height="6" fill="#ffffff" />
+      </g>
+      <!-- Race car with details -->
+      <g transform="translate(180, 340)">
+        <ellipse cx="0" cy="8" rx="32" ry="20" fill="#dc2626" />
+        <rect x="-28" y="0" width="56" height="20" rx="10" fill="#ef4444" />
+        <!-- Car top/windshield -->
+        <rect x="-8" y="2" width="24" height="10" rx="4" fill="#60a5fa" opacity="0.8" />
+        <!-- Wheels -->
+        <circle cx="-18" cy="18" r="8" fill="#1f2937" stroke="#4b5563" stroke-width="2" />
+        <circle cx="18" cy="18" r="8" fill="#1f2937" stroke="#4b5563" stroke-width="2" />
+        <circle cx="-18" cy="18" r="4" fill="#6b7280" />
+        <circle cx="18" cy="18" r="4" fill="#6b7280" />
+        <!-- Speed lines -->
+        <line
+          x1="-42"
+          y1="2"
+          x2="-34"
+          y2="2"
+          stroke="#9ca3af"
+          stroke-width="3"
+          opacity="0.7"
+          stroke-linecap="round"
+        />
+        <line
+          x1="-48"
+          y1="10"
+          x2="-36"
+          y2="10"
+          stroke="#9ca3af"
+          stroke-width="3"
+          opacity="0.7"
+          stroke-linecap="round"
+        />
+        <line
+          x1="-42"
+          y1="18"
+          x2="-34"
+          y2="18"
+          stroke="#9ca3af"
+          stroke-width="3"
+          opacity="0.7"
+          stroke-linecap="round"
+        />
+      </g>
+      <text x="180" y="420" text-anchor="middle" class="fill-black" font-size="14" font-weight="700"
+        >Speedy Lane</text
+      >
+    </g>
+
+    <g role="group" aria-label="Waiting Line - regular tasks like timers" filter="url(#cardShadow)">
+      <!-- Queue background with gradient -->
+      <defs>
+        <linearGradient id="queueBg" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#fce7f3;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#fbcfe8;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="queueStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f472b6;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect
+        x="360"
+        y="280"
+        width="280"
+        height="160"
+        rx="20"
+        fill="url(#queueBg)"
+        stroke="url(#queueStroke)"
+        stroke-width="3"
+      >
+        <title>Waiting Line: regular tasks wait here</title>
+      </rect>
+      <!-- Inner highlight -->
+      <rect
+        x="364"
+        y="284"
+        width="272"
+        height="152"
+        rx="18"
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
+        stroke-width="1"
+      />
+      <!-- Queue rope barriers - posts -->
+      <rect x="378" y="345" width="6" height="60" rx="2" fill="#881337" />
+      <rect x="616" y="345" width="6" height="60" rx="2" fill="#881337" />
+      <!-- Post caps -->
+      <ellipse cx="381" cy="345" rx="8" ry="4" fill="#be185d" />
+      <ellipse cx="619" cy="345" rx="8" ry="4" fill="#be185d" />
+      <!-- Velvet ropes (curved) -->
+      <path
+        d="M 385 352 Q 430 365 475 352"
+        stroke="#881337"
+        stroke-width="3"
+        fill="none"
+        stroke-linecap="round"
+      />
+      <path
+        d="M 475 352 Q 520 365 565 352"
+        stroke="#881337"
+        stroke-width="3"
+        fill="none"
+        stroke-linecap="round"
+      />
+      <path
+        d="M 565 352 Q 592 360 615 352"
+        stroke="#881337"
+        stroke-width="3"
+        fill="none"
+        stroke-linecap="round"
+      />
+      <!-- People in line - more expressive -->
+      {#each [{ x: 408, color: "#fbbf24", bodyColor: "#f59e0b" }, { x: 450, color: "#fbbf24", bodyColor: "#fbbf24" }, { x: 492, color: "#fbbf24", bodyColor: "#f59e0b" }, { x: 534, color: "#fbbf24", bodyColor: "#fbbf24" }] as person, i}
+        <g transform="translate({person.x}, 370)">
+          <!-- Head with expression -->
+          <circle cy="5" r="12" fill={person.color} stroke="#ca8a04" stroke-width="2" />
+          <circle cx="-4" cy="2" r="2.5" fill="#1f2937" />
+          <circle cx="4" cy="2" r="2.5" fill="#1f2937" />
+          <path
+            d="M -4 10 Q 0 {i % 2 === 0 ? '14' : '8'} 4 10"
+            stroke="#1f2937"
+            stroke-width="2"
+            fill="none"
+            stroke-linecap="round"
+          />
+          <!-- Body -->
+          <rect
+            x="-8"
+            y="17"
+            width="16"
+            height="22"
+            rx="4"
+            fill={person.bodyColor}
+            stroke="#ca8a04"
+            stroke-width="1.5"
+          />
+        </g>
+      {/each}
+      <!-- Direction arrow -->
+      <g transform="translate(580, 382)">
+        <path
+          d="M 0 0 L 25 0 M 25 0 L 18 -7 M 25 0 L 18 7"
+          stroke="#be185d"
+          stroke-width="4"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </g>
+      <text x="500" y="420" text-anchor="middle" class="fill-black" font-size="14" font-weight="700"
+        >Waiting Line</text
+      >
+    </g>
+
+    <g role="group" aria-label="Magic Conveyor - moves tasks around" filter="url(#cardShadow)">
+      <!-- Conveyor background with gradient -->
+      <defs>
+        <linearGradient id="conveyorBg" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#f3e8ff;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#e9d5ff;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="conveyorStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#9333ea;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect
+        x="680"
+        y="280"
+        width="260"
+        height="160"
+        rx="20"
+        fill="url(#conveyorBg)"
+        stroke="url(#conveyorStroke)"
+        stroke-width="3"
+      >
+        <title>Magic Conveyor: moves tasks to run</title>
+      </rect>
+      <!-- Inner highlight -->
+      <rect
+        x="684"
+        y="284"
+        width="252"
+        height="152"
+        rx="18"
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
+        stroke-width="1"
+      />
+      <!-- Support pillars with 3D effect -->
+      <rect x="700" y="380" width="12" height="35" fill="#4b5563" rx="3" />
+      <rect x="700" y="380" width="6" height="35" fill="#6b7280" rx="3" />
+      <rect x="800" y="380" width="12" height="35" fill="#4b5563" rx="3" />
+      <rect x="800" y="380" width="6" height="35" fill="#6b7280" rx="3" />
+      <rect x="900" y="380" width="12" height="35" fill="#4b5563" rx="3" />
+      <rect x="900" y="380" width="6" height="35" fill="#6b7280" rx="3" />
+      <!-- Conveyor belt with 3D effect -->
+      <rect x="690" y="373" width="232" height="14" fill="#374151" rx="4" />
+      <rect x="690" y="370" width="232" height="12" fill="#6b7280" rx="4" />
+      <!-- Moving segments with alternating pattern -->
+      {#each [0, 30, 60, 90, 120, 150, 180, 210] as offset}
+        <rect
+          x={692 + offset}
+          y="370"
+          width="22"
+          height="12"
+          fill={offset % 60 === 0 ? "#374151" : "#4b5563"}
+          rx="2"
+        />
+      {/each}
+      <!-- Side guards with glow -->
+      <rect x="688" y="367" width="236" height="3" fill="#fbbf24" rx="1.5" />
+      <rect x="688" y="385" width="236" height="3" fill="#fbbf24" rx="1.5" />
+      <!-- Control panel with details -->
+      <rect
+        x="775"
+        y="306"
+        width="90"
+        height="32"
+        rx="6"
+        fill="#1f2937"
+        stroke="#374151"
+        stroke-width="2"
+      />
+      <!-- Panel screen -->
+      <rect x="780" y="311" width="50" height="22" rx="3" fill="#111827" />
+      <!-- Status lights -->
+      <circle cx="840" cy="315" r="4" fill="#10b981" opacity="0.9" />
+      <circle cx="840" cy="315" r="2.5" fill="#34d399" opacity="0.7" />
+      <circle cx="852" cy="315" r="4" fill="#10b981" opacity="0.9" />
+      <circle cx="852" cy="315" r="2.5" fill="#34d399" opacity="0.7" />
+      <circle cx="840" cy="327" r="4" fill="#fbbf24" opacity="0.9" />
+      <circle cx="840" cy="327" r="2.5" fill="#fcd34d" opacity="0.7" />
+      <circle cx="852" cy="327" r="4" fill="#10b981" opacity="0.9" />
+      <circle cx="852" cy="327" r="2.5" fill="#34d399" opacity="0.7" />
+      <!-- Rotating arrows indicator -->
+      <g transform="translate(805, 322)">
+        <circle r="16" fill="none" stroke="#a78bfa" stroke-width="2" opacity="0.4" />
+        <path
+          d="M -8 -8 A 12 12 0 0 1 8 -8"
+          stroke="#a78bfa"
+          stroke-width="3"
+          fill="none"
+          stroke-linecap="round"
+        />
+        <path
+          d="M 8 8 A 12 12 0 0 1 -8 8"
+          stroke="#a78bfa"
+          stroke-width="3"
+          fill="none"
+          stroke-linecap="round"
+        />
+        <polygon points="10,-6 6,-12 4,-5" fill="#a78bfa" />
+        <polygon points="-10,6 -6,12 -4,5" fill="#a78bfa" />
+      </g>
+      <text x="810" y="420" text-anchor="middle" class="fill-black" font-size="14" font-weight="700"
+        >Magic Conveyor</text
+      >
+    </g>
+  {:else}
+    <!-- Pro Mode: Clean, professional blocks with subtle gradients -->
+    <g role="group" aria-label="Call Stack block" filter="url(#cardShadow)">
+      <defs>
+        <linearGradient id="callStackGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#e0f2fe;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#bae6fd;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect
+        x="40"
+        y="60"
+        width="240"
+        height="160"
+        rx="16"
+        fill="url(#callStackGrad)"
+        stroke="#0284c7"
+        stroke-width="2"
+      >
+        <title>Call Stack: where synchronous JS runs</title>
+      </rect>
+      <rect
+        x="44"
+        y="64"
+        width="232"
+        height="152"
+        rx="14"
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
+        stroke-width="1"
+      />
+      <text x="160" y="145" text-anchor="middle" class="fill-black" font-size="17" font-weight="700"
+        >Call Stack</text
+      >
+    </g>
+
+    <g role="group" aria-label="Web APIs block" filter="url(#cardShadow)">
+      <defs>
+        <linearGradient id="webApisGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#ecfccb;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#d9f99d;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect
+        x="680"
+        y="60"
+        width="240"
+        height="160"
+        rx="16"
+        fill="url(#webApisGrad)"
+        stroke="#65a30d"
+        stroke-width="2"
+      >
+        <title>Web APIs: timers, fetch, and more</title>
+      </rect>
+      <rect
+        x="684"
+        y="64"
+        width="232"
+        height="152"
+        rx="14"
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
+        stroke-width="1"
+      />
+      <text x="800" y="145" text-anchor="middle" class="fill-black" font-size="17" font-weight="700"
+        >Web APIs</text
+      >
+    </g>
+
+    <g role="group" aria-label="Microtask Queue block" filter="url(#cardShadow)">
+      <defs>
+        <linearGradient id="microGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#fef9c3;stop-opacity:1" />
           <stop offset="100%" style="stop-color:#fde047;stop-opacity:1" />
         </linearGradient>
       </defs>
       <rect
         x="40"
-        y="340"
-        width="280"
-        height="120"
+        y="280"
+        width="260"
+        height="140"
         rx="16"
-        fill="url(#speedyBg)"
-        stroke="#f59e0b"
-        stroke-width="3"
-      >
-        <title>Speedy Lane: quick promise tasks</title>
-      </rect>
-      <!-- Road with depth -->
-      <rect x="50" y="383" width="260" height="30" fill="#9ca3af" rx="4" />
-      <rect x="50" y="380" width="260" height="28" fill="#d1d5db" rx="4" />
-      <!-- Dashed center line -->
-      <rect x="50" y="392" width="40" height="4" fill="#fbbf24" rx="1" />
-      <rect x="100" y="392" width="40" height="4" fill="#fbbf24" rx="1" />
-      <rect x="150" y="392" width="40" height="4" fill="#fbbf24" rx="1" />
-      <rect x="200" y="392" width="40" height="4" fill="#fbbf24" rx="1" />
-      <rect x="250" y="392" width="40" height="4" fill="#fbbf24" rx="1" />
-      <!-- Speed signs with checkered pattern -->
-      <rect
-        x="60"
-        y="330"
-        width="30"
-        height="20"
-        rx="3"
-        fill="#1f2937"
-        stroke="#ef4444"
+        fill="url(#microGrad)"
+        stroke="#ca8a04"
         stroke-width="2"
-      />
-      <rect x="62" y="332" width="5" height="5" fill="#ffffff" />
-      <rect x="67" y="337" width="5" height="5" fill="#ffffff" />
-      <rect x="72" y="332" width="5" height="5" fill="#ffffff" />
-      <rect x="77" y="337" width="5" height="5" fill="#ffffff" />
-      <rect x="82" y="332" width="5" height="5" fill="#ffffff" />
-      <rect
-        x="280"
-        y="330"
-        width="30"
-        height="20"
-        rx="3"
-        fill="#1f2937"
-        stroke="#ef4444"
-        stroke-width="2"
-      />
-      <rect x="282" y="332" width="5" height="5" fill="#ffffff" />
-      <rect x="287" y="337" width="5" height="5" fill="#ffffff" />
-      <rect x="292" y="332" width="5" height="5" fill="#ffffff" />
-      <rect x="297" y="337" width="5" height="5" fill="#ffffff" />
-      <rect x="302" y="332" width="5" height="5" fill="#ffffff" />
-      <!-- Race car with details -->
-      <ellipse cx="180" cy="379" rx="28" ry="18" fill="#dc2626" />
-      <rect x="155" y="370" width="50" height="18" rx="8" fill="#ef4444" />
-      <!-- Windshield -->
-      <rect x="175" y="372" width="20" height="8" rx="3" fill="#60a5fa" opacity="0.7" />
-      <!-- Wheels -->
-      <circle cx="165" cy="388" r="6" fill="#1f2937" stroke="#6b7280" stroke-width="1.5" />
-      <circle cx="195" cy="388" r="6" fill="#1f2937" stroke="#6b7280" stroke-width="1.5" />
-      <circle cx="165" cy="388" r="3" fill="#4b5563" />
-      <circle cx="195" cy="388" r="3" fill="#4b5563" />
-      <!-- Speed lines -->
-      <line x1="140" y1="373" x2="150" y2="373" stroke="#9ca3af" stroke-width="2" opacity="0.6" />
-      <line x1="135" y1="379" x2="148" y2="379" stroke="#9ca3af" stroke-width="2" opacity="0.6" />
-      <line x1="140" y1="385" x2="150" y2="385" stroke="#9ca3af" stroke-width="2" opacity="0.6" />
-      <text x="180" y="440" text-anchor="middle" class="fill-black" font-size="15" font-weight="600"
-        >Speedy Lane</text
       >
-    </g>
-
-    <g role="group" aria-label="Waiting Line - regular tasks like timers">
-      <!-- Queue background with gradient -->
-      <defs>
-        <linearGradient id="queueBg" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#fee2e2;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#fecaca;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      <rect
-        x="360"
-        y="300"
-        width="320"
-        height="150"
-        rx="16"
-        fill="url(#queueBg)"
-        stroke="#ef4444"
-        stroke-width="3"
-      >
-        <title>Waiting Line: regular tasks wait here</title>
-      </rect>
-      <!-- Queue rope barriers -->
-      <rect x="375" y="365" width="3" height="50" fill="#7c2d12" />
-      <rect x="615" y="365" width="3" height="50" fill="#7c2d12" />
-      <ellipse cx="375" cy="365" rx="5" ry="3" fill="#991b1b" />
-      <ellipse cx="615" cy="365" rx="5" ry="3" fill="#991b1b" />
-      <path d="M 378 368 Q 410 375 442 368" stroke="#7c2d12" stroke-width="2" fill="none" />
-      <path d="M 442 368 Q 474 375 506 368" stroke="#7c2d12" stroke-width="2" fill="none" />
-      <path d="M 506 368 Q 538 375 570 368" stroke="#7c2d12" stroke-width="2" fill="none" />
-      <path d="M 570 368 Q 592 375 612 368" stroke="#7c2d12" stroke-width="2" fill="none" />
-      <!-- People in line with variety -->
-      <!-- Person 1 -->
-      <circle cx="400" cy="387" r="9" fill="#fbbf24" stroke="#d97706" stroke-width="1.5" />
-      <circle cx="398" cy="385" r="2" fill="#1f2937" />
-      <circle cx="402" cy="385" r="2" fill="#1f2937" />
-      <rect
-        x="394"
-        y="396"
-        width="12"
-        height="16"
-        rx="2"
-        fill="#f59e0b"
-        stroke="#d97706"
-        stroke-width="1.5"
-      />
-      <!-- Person 2 -->
-      <circle cx="432" cy="387" r="9" fill="#fbbf24" stroke="#d97706" stroke-width="1.5" />
-      <circle cx="430" cy="385" r="2" fill="#1f2937" />
-      <circle cx="434" cy="385" r="2" fill="#1f2937" />
-      <rect
-        x="426"
-        y="396"
-        width="12"
-        height="16"
-        rx="2"
-        fill="#fbbf24"
-        stroke="#d97706"
-        stroke-width="1.5"
-      />
-      <!-- Person 3 -->
-      <circle cx="464" cy="387" r="9" fill="#fbbf24" stroke="#d97706" stroke-width="1.5" />
-      <circle cx="462" cy="385" r="2" fill="#1f2937" />
-      <circle cx="466" cy="385" r="2" fill="#1f2937" />
-      <rect
-        x="458"
-        y="396"
-        width="12"
-        height="16"
-        rx="2"
-        fill="#f59e0b"
-        stroke="#d97706"
-        stroke-width="1.5"
-      />
-      <!-- Person 4 -->
-      <circle cx="496" cy="387" r="9" fill="#fbbf24" stroke="#d97706" stroke-width="1.5" />
-      <circle cx="494" cy="385" r="2" fill="#1f2937" />
-      <circle cx="498" cy="385" r="2" fill="#1f2937" />
-      <rect
-        x="490"
-        y="396"
-        width="12"
-        height="16"
-        rx="2"
-        fill="#fbbf24"
-        stroke="#d97706"
-        stroke-width="1.5"
-      />
-      <!-- Person 5 -->
-      <circle cx="528" cy="387" r="9" fill="#fbbf24" stroke="#d97706" stroke-width="1.5" />
-      <circle cx="526" cy="385" r="2" fill="#1f2937" />
-      <circle cx="530" cy="385" r="2" fill="#1f2937" />
-      <rect
-        x="522"
-        y="396"
-        width="12"
-        height="16"
-        rx="2"
-        fill="#f59e0b"
-        stroke="#d97706"
-        stroke-width="1.5"
-      />
-      <!-- Direction arrow -->
-      <path
-        d="M 560 390 L 590 390 M 590 390 L 583 383 M 590 390 L 583 397"
-        stroke="#dc2626"
-        stroke-width="3"
-        fill="none"
-        stroke-linecap="round"
-      />
-      <text x="520" y="440" text-anchor="middle" class="fill-black" font-size="15" font-weight="600"
-        >Waiting Line</text
-      >
-    </g>
-
-    <g role="group" aria-label="Magic Conveyor - moves tasks around">
-      <!-- Conveyor background with gradient -->
-      <defs>
-        <linearGradient id="conveyorBg" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#ede9fe;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#ddd6fe;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      <rect
-        x="700"
-        y="300"
-        width="280"
-        height="150"
-        rx="16"
-        fill="url(#conveyorBg)"
-        stroke="#7c3aed"
-        stroke-width="3"
-      >
-        <title>Magic Conveyor: moves tasks to run</title>
-      </rect>
-      <!-- Support pillars -->
-      <rect x="705" y="398" width="8" height="25" fill="#6b7280" rx="2" />
-      <rect x="785" y="398" width="8" height="25" fill="#6b7280" rx="2" />
-      <rect x="865" y="398" width="8" height="25" fill="#6b7280" rx="2" />
-      <!-- Conveyor belt with 3D effect -->
-      <rect x="690" y="393" width="220" height="10" fill="#4b5563" rx="3" />
-      <rect x="690" y="390" width="220" height="8" fill="#6b7280" rx="3" />
-      <!-- Moving segments with alternating pattern -->
-      <rect x="690" y="390" width="18" height="8" fill="#374151" rx="1" />
-      <rect x="718" y="390" width="18" height="8" fill="#4b5563" rx="1" />
-      <rect x="746" y="390" width="18" height="8" fill="#374151" rx="1" />
-      <rect x="774" y="390" width="18" height="8" fill="#4b5563" rx="1" />
-      <rect x="802" y="390" width="18" height="8" fill="#374151" rx="1" />
-      <rect x="830" y="390" width="18" height="8" fill="#4b5563" rx="1" />
-      <rect x="858" y="390" width="18" height="8" fill="#374151" rx="1" />
-      <rect x="886" y="390" width="18" height="8" fill="#4b5563" rx="1" />
-      <!-- Side guards -->
-      <rect x="688" y="387" width="224" height="2" fill="#fbbf24" rx="1" />
-      <rect x="688" y="401" width="224" height="2" fill="#fbbf24" rx="1" />
-      <!-- Control panel with more details -->
-      <rect
-        x="780"
-        y="330"
-        width="80"
-        height="24"
-        rx="4"
-        fill="#374151"
-        stroke="#1f2937"
-        stroke-width="1"
-      />
-      <!-- Status lights -->
-      <circle cx="795" cy="342" r="4" fill="#10b981" />
-      <circle cx="810" cy="342" r="4" fill="#10b981" />
-      <circle cx="825" cy="342" r="4" fill="#fbbf24" />
-      <circle cx="840" cy="342" r="4" fill="#10b981" />
-      <!-- Light glow effect -->
-      <circle cx="795" cy="342" r="3" fill="#34d399" opacity="0.6" />
-      <circle cx="810" cy="342" r="3" fill="#34d399" opacity="0.6" />
-      <circle cx="825" cy="342" r="3" fill="#fcd34d" opacity="0.6" />
-      <circle cx="840" cy="342" r="3" fill="#34d399" opacity="0.6" />
-      <!-- Circular motion indicator -->
-      <circle
-        cx="930"
-        cy="335"
-        r="10"
-        fill="none"
-        stroke="#a78bfa"
-        stroke-width="2"
-        opacity="0.5"
-      />
-      <path
-        d="M 935 335 L 940 330 L 938 335 L 943 333"
-        stroke="#a78bfa"
-        stroke-width="2"
-        fill="none"
-      />
-      <text x="840" y="440" text-anchor="middle" class="fill-black" font-size="15" font-weight="600"
-        >Magic Conveyor</text
-      >
-    </g>
-  {:else}
-    <!-- Pro Mode: Simple blocks -->
-    <g role="group" aria-label="Call Stack block">
-      <rect x="40" y="60" width="220" height="140" rx="12" fill="#e0f2fe" stroke="#0284c7">
-        <title>Call Stack: where synchronous JS runs</title>
-      </rect>
-      <text x="150" y="135" text-anchor="middle" class="fill-black" font-size="18">Call Stack</text>
-    </g>
-
-    <g role="group" aria-label="Web APIs block">
-      <rect x="700" y="60" width="220" height="140" rx="12" fill="#ecfccb" stroke="#65a30d">
-        <title>Web APIs: timers, fetch, and more</title>
-      </rect>
-      <text x="810" y="135" text-anchor="middle" class="fill-black" font-size="18">Web APIs</text>
-    </g>
-
-    <g role="group" aria-label="Microtask Queue block">
-      <rect x="40" y="340" width="280" height="120" rx="12" fill="#fef3c7" stroke="#d97706">
         <title>Microtask Queue: promises first</title>
       </rect>
-      <text x="180" y="405" text-anchor="middle" class="fill-black" font-size="18"
+      <rect
+        x="44"
+        y="284"
+        width="252"
+        height="132"
+        rx="14"
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
+        stroke-width="1"
+      />
+      <text x="170" y="355" text-anchor="middle" class="fill-black" font-size="16" font-weight="700"
         >Microtask Queue</text
       >
     </g>
 
-    <g role="group" aria-label="Macrotask Queue block">
-      <rect x="360" y="340" width="280" height="120" rx="12" fill="#fee2e2" stroke="#ef4444">
+    <g role="group" aria-label="Macrotask Queue block" filter="url(#cardShadow)">
+      <defs>
+        <linearGradient id="macroGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#fce7f3;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#fbcfe8;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect
+        x="340"
+        y="280"
+        width="260"
+        height="140"
+        rx="16"
+        fill="url(#macroGrad)"
+        stroke="#db2777"
+        stroke-width="2"
+      >
         <title>Macrotask Queue: timers and more</title>
       </rect>
-      <text x="500" y="405" text-anchor="middle" class="fill-black" font-size="18"
+      <rect
+        x="344"
+        y="284"
+        width="252"
+        height="132"
+        rx="14"
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
+        stroke-width="1"
+      />
+      <text x="470" y="355" text-anchor="middle" class="fill-black" font-size="16" font-weight="700"
         >Macrotask Queue</text
       >
     </g>
 
-    <g role="group" aria-label="Event Loop block">
-      <rect x="680" y="340" width="240" height="120" rx="12" fill="#ede9fe" stroke="#7c3aed">
+    <g role="group" aria-label="Event Loop block" filter="url(#cardShadow)">
+      <defs>
+        <linearGradient id="eventLoopGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#f3e8ff;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#e9d5ff;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect
+        x="640"
+        y="280"
+        width="240"
+        height="140"
+        rx="16"
+        fill="url(#eventLoopGrad)"
+        stroke="#9333ea"
+        stroke-width="2"
+      >
         <title>Event Loop: picks what runs next</title>
       </rect>
-      <text x="800" y="405" text-anchor="middle" class="fill-black" font-size="18">Event Loop</text>
+      <rect
+        x="644"
+        y="284"
+        width="232"
+        height="132"
+        rx="14"
+        fill="none"
+        stroke="rgba(255,255,255,0.5)"
+        stroke-width="1"
+      />
+      <text x="760" y="355" text-anchor="middle" class="fill-black" font-size="17" font-weight="700"
+        >Event Loop</text
+      >
     </g>
   {/if}
 
@@ -678,9 +937,46 @@
 
 <style>
   .fill-black {
-    fill: #111827;
+    fill: #1e293b;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
   }
   :global(html.dark) .fill-black {
-    fill: #f3f4f6;
+    fill: #e2e8f0;
+  }
+  .stage-svg {
+    border-radius: var(--radius-xl, 1.5rem);
+    overflow: hidden;
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, 0.05),
+      0 0 0 1px rgba(255, 255, 255, 0.5);
+  }
+  .stage-bg {
+    fill: url(#bgGradient);
+    transition: fill 0.3s ease;
+  }
+  .stage-grid {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  .stage-grid-lg {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+  :global(html.dark) .stage-bg {
+    fill: #0f172a;
+  }
+  :global(html.dark) .stage-grid {
+    opacity: 0.3;
+  }
+  :global(html.dark) .stage-grid-lg {
+    opacity: 0.2;
+  }
+  :global(html.dark) .stage-svg {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 0 40px rgba(99, 102, 241, 0.05);
   }
 </style>

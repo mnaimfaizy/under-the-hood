@@ -264,27 +264,30 @@
 
 <svelte:window on:keydown={onKeydown} />
 
-<main class="min-h-screen flex flex-col gap-6 p-4 md:p-8 max-w-7xl mx-auto">
-  <header class="flex flex-wrap gap-4 items-center justify-between">
-    <div>
+<main class="min-h-screen flex flex-col gap-6 p-4 sm:p-6 md:p-8 lg:p-10 max-w-[1440px] mx-auto">
+  <header class="flex flex-wrap gap-4 md:gap-6 items-center justify-between">
+    <div class="space-y-1.5">
       <h1
-        class="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400"
+        class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400"
+        style="text-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);"
       >
         Under the Hood: JavaScript
       </h1>
-      <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1 max-w-prose">
+      <p class="text-sm md:text-base text-slate-500 dark:text-slate-400 max-w-lg leading-relaxed">
         Visualize how the event loop schedules work using kid-friendly metaphors—and peek deeper in
         Pro Mode.
       </p>
     </div>
-    <div class="flex items-center gap-3 ml-auto flex-wrap">
+    <div class="flex items-center gap-3 md:gap-4 ml-auto flex-wrap">
       <!-- Audience Mode: Kid vs Pro -->
-      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800">
+      <div
+        class="flex items-center p-1.5 rounded-2xl bg-gradient-to-b from-slate-100 to-slate-200/80 dark:from-slate-800/90 dark:to-slate-900/80 shadow-inner border border-slate-200/50 dark:border-slate-700/50"
+      >
         <button
-          class="text-xs font-medium px-2 py-1 rounded transition-colors {mode !== 'pro' &&
-          mode !== 'hifi'
-            ? 'bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400'
-            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}"
+          class="flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-xl transition-all duration-250 {mode !==
+            'pro' && mode !== 'hifi'
+            ? 'bg-white dark:bg-slate-700 shadow-lg text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-200/50 dark:ring-indigo-600/50 translate-y-[-1px]'
+            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-700/50'}"
           on:click={() => {
             mode = "kid";
             logs = [];
@@ -292,12 +295,13 @@
           }}
           aria-pressed={mode === "kid"}
         >
-          🎮 Kid
+          <span class="text-lg">🎮</span> Kid
         </button>
         <button
-          class="text-xs font-medium px-2 py-1 rounded transition-colors {mode === 'pro'
-            ? 'bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400'
-            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}"
+          class="flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-xl transition-all duration-250 {mode ===
+          'pro'
+            ? 'bg-white dark:bg-slate-700 shadow-lg text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-200/50 dark:ring-indigo-600/50 translate-y-[-1px]'
+            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-700/50'}"
           on:click={() => {
             mode = "pro";
             logs = [];
@@ -305,15 +309,20 @@
           }}
           aria-pressed={mode === "pro"}
         >
-          🔧 Pro
+          <span class="text-lg">🔧</span> Pro
         </button>
       </div>
 
       <!-- View Mode Selector -->
-      <div class="flex items-center gap-1.5">
-        <span class="text-xs text-gray-500 dark:text-gray-400">View:</span>
+      <div
+        class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm backdrop-blur-sm"
+      >
+        <span
+          class="text-[0.65rem] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider"
+          >View</span
+        >
         <select
-          class="text-xs px-2 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          class="text-sm px-4 py-2 rounded-lg border-0 bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium shadow-inner focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 cursor-pointer appearance-none pr-8 bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 20 20%22%3E%3Cpath stroke=%22%236b7280%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%221.5%22 d=%22m6 8 4 4 4-4%22/%3E%3C/svg%3E')] bg-no-repeat bg-[right_0.5rem_center] bg-[length:1.25em_1.25em]"
           value={mode === "kid" || mode === "pro" ? "basic" : mode}
           on:change={(e) => {
             const val = e.currentTarget.value;
@@ -332,19 +341,19 @@
           data-testid="view-mode-select"
         >
           <option value="basic">Basic (2D)</option>
-          <option value="newengine">🚀 3D Visualization</option>
+          <option value="newengine">🚀 3D Engine</option>
         </select>
       </div>
 
       <!-- Theme Toggle -->
       <button
-        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        class="p-3 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-250 backdrop-blur-sm group hover:border-indigo-300 dark:hover:border-indigo-600"
         aria-label="Toggle dark mode"
         on:click={toggleTheme}
         title="Toggle theme"
       >
         <svg
-          class="w-5 h-5 text-gray-600 dark:text-gray-400 dark:hidden"
+          class="w-5 h-5 text-gray-500 dark:hidden group-hover:text-violet-600 transition-colors"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -357,7 +366,7 @@
           />
         </svg>
         <svg
-          class="w-5 h-5 text-yellow-400 hidden dark:block"
+          class="w-5 h-5 text-amber-400 hidden dark:block group-hover:text-amber-300 transition-colors"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -374,11 +383,13 @@
   </header>
 
   <section
-    class="surface shadow-sm p-3 md:p-5 relative overflow-hidden"
+    class="surface shadow-xl p-4 sm:p-5 md:p-6 lg:p-8 relative overflow-hidden"
     aria-label="Simulation stage and controls"
   >
+    <!-- Decorative gradient background -->
     <div
-      class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.15),transparent_60%)]"
+      class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20"
+      style="background: radial-gradient(ellipse 80% 60% at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 50%), radial-gradient(ellipse 60% 50% at 90% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%), radial-gradient(ellipse 50% 40% at 50% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);"
     ></div>
 
     <div class={mode === "kid" ? "kid-mode-layout" : ""}>
