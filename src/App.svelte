@@ -22,6 +22,7 @@
     scenarioDomClick,
   } from "./lib/sim/scenarios";
   import IntegratedDemo from "./lib/three/IntegratedDemo.svelte";
+  import KidModeMapping from "./lib/KidModeMapping.svelte";
 
   // UI state
   let speed = 1; // 1x
@@ -84,22 +85,27 @@
   loadSelectedScenario();
 
   function updateNarration(event) {
+    const kidFriendly = mode === "kid";
+
     switch (event.type) {
       case "sync":
-        narration = event.description || "JS is doing a step on the Call Stack.";
+        if (kidFriendly) {
+          narration = event.description || "The Task Robot is working on something!";
+        } else {
+          narration = event.description || "JS is doing a step on the Call Stack.";
+        }
         break;
       case "token-move":
         narration = friendlyMove(event);
         break;
-      case "microtask-drain":
-        narration = event.description || "Promises zoom ahead in the VIP lane (microtasks)!";
-        break;
-      case "macrotask-run":
-        narration = event.description || "Timers wait their turn in the big line (macrotasks).";
+      case "token-remove":
+        narration = event.description || "Task completed and removed! ✅";
         break;
       case "scenario-end":
-        narration = "All done! Want to play again?";
+        narration = "All done! Want to play again? 🎉";
         break;
+      default:
+        narration = event.description || "Something is happening...";
     }
   }
 
@@ -116,13 +122,37 @@
   }
 
   function friendlyMove(e) {
-    const map = {
-      "call-stack": "the Call Stack",
-      "web-api": "the Web APIs area",
-      "microtask-queue": "the microtask VIP lane",
-      "macrotask-queue": "the macrotask line",
+    const kidMap = {
+      "call-stack": "Task Robot",
+      call_stack: "Task Robot",
+      callstack: "Task Robot",
+      "web-api": "Magic Cloud",
+      webapi: "Magic Cloud",
+      web_api: "Magic Cloud",
+      "microtask-queue": "Speedy Lane",
+      microtask_queue: "Speedy Lane",
+      micro: "Speedy Lane",
+      "macrotask-queue": "Waiting Line",
+      macrotask_queue: "Waiting Line",
+      macro: "Waiting Line",
     };
-    return `${e.token.label} moves to ${map[e.to] || e.to}.`;
+    const proMap = {
+      "call-stack": "Call Stack",
+      call_stack: "Call Stack",
+      callstack: "Call Stack",
+      "web-api": "Web APIs",
+      webapi: "Web APIs",
+      web_api: "Web APIs",
+      "microtask-queue": "Microtask Queue",
+      microtask_queue: "Microtask Queue",
+      micro: "Microtask Queue",
+      "macrotask-queue": "Macrotask Queue",
+      macrotask_queue: "Macrotask Queue",
+      macro: "Macrotask Queue",
+    };
+    const map = mode === "kid" ? kidMap : proMap;
+    const location = map[e.to] || e.to;
+    return `${e.token.label} moves to ${location}!`;
   }
 
   function onPlay() {
@@ -152,6 +182,35 @@
     if (mode === "integrated") integratedApi?.reset?.();
     runner.reset();
     loadSelectedScenario();
+    narration = "Scenario reset. Press Play to start!";
+  }
+
+  function onStepForward() {
+    running = false;
+    runner.pause();
+    runner.step();
+  }
+
+  function onStepBackward() {
+    running = false;
+    runner.pause();
+
+    // To go back, we need to replay from start to previous position
+    const currentStep = runner.getCurrentStep();
+    if (currentStep > 0) {
+      const targetStep = currentStep - 1;
+      runner.reset();
+      stageApi?.resetTokens?.();
+
+      // Step through to target position
+      for (let i = 0; i < targetStep; i++) {
+        runner.step();
+      }
+
+      narration = `Stepped back to position ${targetStep + 1}/${runner.getTotalSteps()}`;
+    } else {
+      narration = "Already at the beginning!";
+    }
   }
 
   // Bind speed slider (0.25x–3x) to ms per step
@@ -393,35 +452,45 @@
     <div
       class="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.15),transparent_60%)]"
     ></div>
-    {#if mode === "hifi"}
-      <HighFidelityStage
-        bind:api={stageApi}
-        onNarrate={(l) => {
-          narration = l;
-          if (aggregateNarration) {
-            narrationHistory = [...narrationHistory, { t: Date.now(), line: l }].slice(-20);
-          }
-        }}
-      />
-    {:else if mode === "3d"}
-      <!-- 3D test removed -->
-    {:else if mode === "tokens"}
-      <TokenDemo />
-    {:else if mode === "callstack"}
-      <CallStackDemo />
-    {:else if mode === "webapi"}
-      <WebAPIDemo />
-    {:else if mode === "microtask"}
-      <MicrotaskDemo />
-    {:else if mode === "macrotask"}
-      <MacrotaskDemo />
-    {:else if mode === "eventloop"}
-      <EventLoopDemo />
-    {:else if mode === "integrated"}
-      <IntegratedDemo bind:api={integratedApi} />
-    {:else}
-      <Stage bind:api={stageApi} {mode} />
-    {/if}
+
+    <div class={mode === "kid" ? "kid-mode-layout" : ""}>
+      {#if mode === "kid"}
+        <div class="stage-container">
+          <Stage bind:api={stageApi} {mode} />
+        </div>
+        <div class="sidebar-container">
+          <KidModeMapping />
+        </div>
+      {:else if mode === "hifi"}
+        <HighFidelityStage
+          bind:api={stageApi}
+          onNarrate={(l) => {
+            narration = l;
+            if (aggregateNarration) {
+              narrationHistory = [...narrationHistory, { t: Date.now(), line: l }].slice(-20);
+            }
+          }}
+        />
+      {:else if mode === "3d"}
+        <!-- 3D test removed -->
+      {:else if mode === "tokens"}
+        <TokenDemo />
+      {:else if mode === "callstack"}
+        <CallStackDemo />
+      {:else if mode === "webapi"}
+        <WebAPIDemo />
+      {:else if mode === "microtask"}
+        <MicrotaskDemo />
+      {:else if mode === "macrotask"}
+        <MacrotaskDemo />
+      {:else if mode === "eventloop"}
+        <EventLoopDemo />
+      {:else if mode === "integrated"}
+        <IntegratedDemo bind:api={integratedApi} />
+      {:else}
+        <Stage bind:api={stageApi} {mode} />
+      {/if}
+    </div>
   </section>
 
   <section class="flex flex-col gap-4">
@@ -433,6 +502,8 @@
       {onPlay}
       {onPause}
       {onRestart}
+      {onStepForward}
+      {onStepBackward}
       onScenarioChange={(v) => {
         scenario = v;
         onRestart();
@@ -556,6 +627,32 @@
 </main>
 
 <style>
+  .kid-mode-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .stage-container {
+    min-width: 0; /* Allow flex shrink */
+  }
+
+  .sidebar-container {
+    position: sticky;
+    top: 1rem;
+  }
+
+  @media (max-width: 1024px) {
+    .kid-mode-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .sidebar-container {
+      position: static;
+    }
+  }
+
   .narration-history {
     margin: 0;
     padding-left: 1rem;

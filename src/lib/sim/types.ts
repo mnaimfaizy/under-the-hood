@@ -18,6 +18,7 @@ export type SimEvent =
   | { type: "microtask-drain"; description: string }
   | { type: "macrotask-run"; description: string }
   | { type: "token-move"; token: Token; from: string; to: string }
+  | { type: "token-remove"; tokenId: string; description?: string }
   | { type: "stack-push"; frame: string }
   | { type: "stack-pop"; frame: string }
   | { type: "enqueue-micro"; token: Token }

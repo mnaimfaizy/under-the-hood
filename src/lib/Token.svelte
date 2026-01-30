@@ -47,9 +47,9 @@
 <g bind:this={tokenEl} style="cursor: pointer;" role="img" aria-label={`${label} token`}>
   {#if kind === "sync"}
     <rect
-      x="-40"
+      x="-50"
       y="-22"
-      width="80"
+      width="100"
       height="44"
       rx="14"
       fill={color}
@@ -59,9 +59,9 @@
     />
   {:else if kind === "micro"}
     <rect
-      x="-40"
+      x="-50"
       y="-22"
-      width="80"
+      width="100"
       height="44"
       rx="8"
       fill={color}
@@ -71,9 +71,9 @@
     />
   {:else if kind === "macro"}
     <rect
-      x="-40"
+      x="-50"
       y="-22"
-      width="80"
+      width="100"
       height="44"
       rx="22"
       fill={color}
@@ -83,9 +83,9 @@
     />
   {:else if kind === "webapi"}
     <rect
-      x="-40"
+      x="-50"
       y="-22"
-      width="80"
+      width="100"
       height="44"
       rx="10"
       fill={color}
@@ -94,13 +94,13 @@
       filter="url(#tokenShadow)"
     />
   {/if}
-  <text x="-28" y="6" font-size="22">{icons[kind]}</text>
+  <text x="-35" y="6" font-size="18">{icons[kind]}</text>
   <text
-    x="0"
+    x="8"
     y="6"
-    font-size="16"
+    font-size="12"
     text-anchor="middle"
-    style="font-weight:600; letter-spacing:0.5px;">{label}</text
+    style="font-weight:600; letter-spacing:0.3px;">{label}</text
   >
 </g>
 

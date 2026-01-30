@@ -57,5 +57,23 @@ export function createRunner(options: RunnerOptions) {
     }
   }
 
-  return { play, pause, step, reset, load, setSpeed };
+  function getCurrentStep() {
+    return index;
+  }
+
+  function getTotalSteps() {
+    return scenario.length;
+  }
+
+  function stepBackward() {
+    if (index > 0) {
+      index--;
+      // Re-emit the previous event for narration update
+      if (index < scenario.length) {
+        emit(scenario[index]);
+      }
+    }
+  }
+
+  return { play, pause, step, stepBackward, reset, load, setSpeed, getCurrentStep, getTotalSteps };
 }
